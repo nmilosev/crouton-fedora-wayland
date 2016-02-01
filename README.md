@@ -48,7 +48,6 @@ Installation
 
 1. Developer unlock your chromebook
 2. Open crosh shell
-3.
 
 ```
 cd ~/Downloads
@@ -68,7 +67,6 @@ since it breaks the official Crouton if you have it installed. For example:
 ```
 sudo mkdir /mnt/stateful_partition/crouton-fedora
 sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora -p /mnt/stateful_partition/crouton-fedora
-
 ```
 
 Please consult the offical Crouton documentation for this.
@@ -81,12 +79,10 @@ script for more details. It works very well for me but it might not work for you
 you can always run a local VNC server (check my blog in the useful links section) but it is much slower
 than the real deal.
 
-1. Open crosh shell
-2.
-```
-sudo enter-chroot
-sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
+From the chroot:
 
+```
+sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
 ```
 
 Check if the script outputed errors, and try to fix them.
