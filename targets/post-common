@@ -1,0 +1,55 @@
+#!/bin/sh -e
+# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a target, but it's not selectable by the user. These are the commands
+# that get executed at the very end of the generated prepare.sh.
+# These commands are not optional and are automatically added to targets.
+
+REQUIRES=''
+DESCRIPTION=''
+HOSTBIN='enter-chroot delete-chroot edit-chroot mount-chroot unmount-chroot'
+HOSTBIN="$HOSTBIN crash_reporter_wrapper"
+. "${TARGETSDIR:="$PWD"}/common"
+
+### Append to prepare.sh:
+
+# Set the default coredump handler
+if [ ! -f '/etc/crouton/core_pattern' ]; then
+    core_pattern=''
+    echo "\
+# The first non-comment line is the core_pattern that applies to this chroot.
+# See man 5 core for details.
+
+$core_pattern" > '/etc/crouton/core_pattern'
+fi
+
+echo 'Cleaning up...' 1>&2
+dnf clean all
+
+#fix dbus
+mkdir /var/run/dbus
+
+mkdir /home/fedora
+#fedora blue prompt:
+echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' > /home/fedora/.bash_profile
+#fix permissions
+chown fedora /home/fedora
+chown fedora /home/fedora/.bash_profile
+
+if [ -n "$TIPS" ]; then
+    echo "
+$(echo_color "b" "Here's some tips:")
+$TIPS" 1>&2
+fi
+
+rm -f "$0"
+
+echo
+echo 'Modified Crouton script for Fedora 23 - 2016 January 28th'
+echo 'http://nmilosev.svbtle.com'
+echo
+echo 'Default user and root passwords are: fedora'
+echo 'Have fun!'
+echo

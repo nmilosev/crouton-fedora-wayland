@@ -1,0 +1,120 @@
+#!/bin/sh -e
+# Copyright (c) 2013 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a distro-specific continuation of the prepare.sh script.
+
+PKGEXT='rpm'
+DISTROAKA='fedora'
+
+
+# install_dist: see install() in prepare.sh for details.
+install_dist() {
+    local pkgs='' aurpkgs='' params='' multilib=''
+
+    while [ "$#" != 0 ]; do
+        if [ "$1" = "--minimal" ]; then
+            true # Ignore: irrelevant for fedora
+        elif [ "$1" = "--asdeps" ]; then
+            true # Ignore asdeps
+        else
+            break
+        fi
+        shift
+    done
+    while [ "$#" != 0 ]; do
+        if [ "$1" = '--' ]; then
+            shift
+            break
+        fi
+        aurstrip=${1#aur:}
+        if [ "$aurstrip" = "$1" ]; then
+            if [ -n "$multilib" ] && \
+	       [ "$1" = "gcc" ]; then
+                pkgs="$pkgs $1-multilib"
+            else
+                pkgs="$pkgs $1"
+            fi
+        else
+            aurpkgs="$aurpkgs $aurstrip"
+        fi
+        shift
+    done
+    if [ -n "$pkgs" ]; then
+        yum --assumeyes $params install $pkgs
+    fi
+
+}
+
+
+# install_pkg_dist: see install_pkg() in prepare.sh for details.
+install_pkg_dist() {
+    error 1 'ERROR: install_pkg_dist is not supported on Fedora'
+}
+
+
+# remove_dist: see remove() in prepare.sh for details.
+remove_dist() {
+    yum --assumeyes erase "$@"
+}
+
+# ensure we are in /
+cd /
+
+# Before we install the packages with rpm we need to delete some files
+# so we don't get the backup files *.-
+# TODO:
+#rm -rf /etc/group /etc/gshadow /etc/passwd /etc/shadow
+
+# Overriding $basearch for yum if a different architecture is defined for
+# creating the chroot.
+# echo $ARCH > /etc/yum/vars/basearch
+
+# Reinstall all packages with rpm
+for rpm in *.rpm; do
+    /usr/bin/rpm -i --nodeps --nosignature "$rpm"
+    echo 'Installing: ' "$rpm"
+done
+
+# Remove all manually downloaded rpm packages
+rm /*.rpm
+
+# import public gpg keys for yum (included in package fedora-release)
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
+
+# Create a default rc.local with some commands to let fedora work on
+# crouton.
+# TODO: Fix this.
+cat > '/etc/rc.local' <<EOF
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+############################ Crouton ##############################
+# For now we add some things to rc.local to get fedora working in #
+# crouton. Please leave this untouched and add your own commands  #
+# before exit 0.                                                  #
+###################################################################
+mount --bind /var/run /run
+
+exit 0
+EOF
+
+chmod +x /etc/rc.local
+
+umount '/var/run/lock' '/var/run'
+rm -rf --one-file-system /var/run/*
+    
+
+
+
+
