@@ -70,7 +70,7 @@ find "$tmp"/"$subdir" -type f -name '*.rpm' | xargs -n1 -ifile sh -c ""$tmp"/bas
 )
 
 
-#fixing gruops
+#fixing groups and users
 echo 'Fixing groups and users'
 
 rm "$tmp/$subdir/etc/group"

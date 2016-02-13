@@ -9,9 +9,9 @@ sudo dnf install xorg-x11-drv-intel* xorg-x11-drv-synaptics* -y
 
 #install GNOME group with DNF, you can substitute this with a DE of your choice
 #but don't forget to modify the xinitrc file
-#gnome-terminal is broken, and installing firefox on chromeos feels dirty so we install terminator and epiphany
+#gnome-terminal is broken, and installing firefox on chromeos feels dirty so we install terminator and midori
 sudo dnf groupinstall "Fedora Workstation" --exclude=gnome-terminal,firefox -y
-sudo dnf install terminator epiphany -y
+sudo dnf install terminator midori -y
 
 #install croutonfreon a.k.a. 'black magic from the dark side'
 sudo cp $dir/croutonfreon.so /usr/local/lib/croutonfreon.so

@@ -1,4 +1,4 @@
-fedora-crouton: Crouton version for Fedora 23
+crouton-fedora: Crouton version for Fedora
 =================================================
 
 This is a modified version of Crouton which installs Fedora 23 (cli) onto your Chromebook.
@@ -51,15 +51,12 @@ Installation
 
 ```
 cd ~/Downloads
-wget http://bit.ly/1Pa9PlU -O crouton-fedora.tar.gz
+wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
 tar xvf crouton-fedora.tar.gz
 sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora
 ```
 
 This install the CLI version. To enter Fedora: ```sudo enter-chroot```
-
-The latest version is on my Google Drive for now, but you can also download the latest code
-from here, since it is the same thing.
 
 A good practice is to also include a parameter ```-p``` to install this Crouton to the non-default path
 since it breaks the official Crouton if you have it installed. For example:
@@ -70,6 +67,9 @@ sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora -p /mnt/statefu
 ```
 
 Please consult the offical Crouton documentation for this.
+
+With this paramter, you can also install Crouton Fedora onto your sd card or your USB drive. Just please
+remember, that performace will be greatly reduced if your SD card/USB drive is slow.
 
 Graphics installation (GNOME)
 =================================================
@@ -108,6 +108,7 @@ Broken stuff:
 - fedora isn't very happy to run without systemd
 - not sure if it will work on non-Intel chromebook's
 - keyboard bindings (haven't bothered with this, cause I don't need this)
+- switching can sometimes be "wonky"
 
 If you don't have Freon, you should be able to connect to the X server started by ChromeOS
 with the included ```host-X11``` command from Crouton.
@@ -139,6 +140,14 @@ Modify ```install.sh``` script. It's really easy!
 
 Modify the ```default``` file in ```installater/fedora``` folder. You can find mirrors on the
 fedora mirror list site.
+
+**What about Wine?**
+
+Wine works fine. I've sucessfully installed Photoshop CS6 through the PlayOnLinux Wine front-end.
+
+**What about VirtualBox?**
+
+VirtualBox would require a patched kernel, so please use the official Crouton if you need VirtualBox.
 
 How does it look like?
 ---
