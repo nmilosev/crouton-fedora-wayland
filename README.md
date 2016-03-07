@@ -53,7 +53,7 @@ Installation
 cd ~/Downloads
 wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
 tar xvf crouton-fedora.tar.gz
-sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora
 ```
 
 This install the CLI version. To enter Fedora: ```sudo enter-chroot```
