@@ -148,7 +148,7 @@ Wine works fine. I've sucessfully installed Photoshop CS6 through the PlayOnLinu
 **Architecture?**
 
 You can install an i686 chroot onto a x86_64 Chromebook. Specify ```-a i386``` to the installer. This way it will take
-much less space, and you really don't lose anything.
+much less space, and you really don't lose anything. You will also need to run dnf with [BROKEN AT THE MOMENT DNF DOESN'T RESPECT]
 
 **What about VirtualBox?**
 
