@@ -19,7 +19,7 @@ tape:x:26:
 video:x:27:fedora
 ftp:x:50:
 lock:x:54:
-audio:x:220:fedora
+audio:x:600:fedora
 nobody:x:99:
 users:x:100:
 hwaudio:x:18:
