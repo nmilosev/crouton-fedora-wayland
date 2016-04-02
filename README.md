@@ -1,7 +1,7 @@
 crouton-fedora: Crouton version for Fedora
 =================================================
 
-This is a modified version of Crouton which installs Fedora 23 (cli) onto your Chromebook.
+This is a modified version of Crouton which installs Fedora onto your Chromebook.
 This version isn't nearly as polished as the main version of Crouton with Debian/Ubuntu.
 Please don't use this if you aren't familiar with the Crouton project as it is much better
 than this version.
@@ -70,6 +70,24 @@ Please consult the offical Crouton documentation for this.
 
 With this paramter, you can also install Crouton Fedora onto your sd card or your USB drive. Just please
 remember, that performace will be greatly reduced if your SD card/USB drive is slow.
+
+Fedora 24 Alpha
+=================================================
+
+You can now try the new Fedora 24 Alpha. Be aware that it is less stable than 23.
+
+```
+cd ~/Downloads
+wget http://bit.ly/1qo0vFv -O crouton-fedora24.tar.gz
+tar xvf crouton-fedora24.tar.gz
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora24 -t fedora
+```
+
+This installs Fedora 24 Minimal install. It takes a bit longer than the 23 installation.
+
+You can install DE as described below. XFCE is default now.
+
+Have fun!
 
 Graphics installation (GNOME)
 =================================================
