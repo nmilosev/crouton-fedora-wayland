@@ -60,6 +60,8 @@ sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora23
 
 **The default freonx DE is XFCE now, but you can still change it in the ```install.sh```**
 
+**To install Fedora 24 daily build substitute the path to the Fedora 24 Docker image in the ```default``` file (as described there)**
+
 This installs the CLI version. To enter Fedora: ```sudo enter-chroot```
 
 A good practice is to also include a parameter ```-p``` to install this Crouton to the non-default path
@@ -67,7 +69,7 @@ since it breaks the official Crouton if you have it installed. For example:
 
 ```
 sudo mkdir /usr/local/crouton-fedora
-sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora23 -p /usr/local/crouton-fedora
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora23 -p /usr/local/crouton-fedora
 sudo sh /usr/local/crouton-fedora/bin/enter-chroot
 ```
 
@@ -76,25 +78,7 @@ Please consult the offical Crouton documentation for this.
 With this paramter, you can also install Crouton Fedora onto your sd card or your USB drive. Just please
 remember, that performace will be greatly reduced if your SD card/USB drive is slow.
 
-Fedora 24 Alpha
-=================================================
-
-You can now try the new Fedora 24 Alpha. Be aware that it is less stable than 23.
-
-```
-cd ~/Downloads
-wget http://bit.ly/1qo0vFv -O crouton-fedora24.tar.gz
-tar xvf crouton-fedora24.tar.gz
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora24 -t fedora
-```
-
-This installs Fedora 24 Minimal install. It takes a bit longer than the 23 installation.
-
-You can install DE as described below. XFCE is default now.
-
-Have fun!
-
-Graphics installation (GNOME)
+Graphics installation (GNOME/XFCE/anything)
 =================================================
 
 Tested only on mine Intel-based chromebook with Freon, please see the ```freon-x/install.sh```
@@ -105,6 +89,7 @@ than the real deal.
 From the chroot (as fedora user):
 
 ```
+cd ~
 sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
 ```
 
@@ -144,7 +129,7 @@ FAQ:
 **How do I switch back?**
 
 Type ```croutoncycle cros``` to the terminal. Tip: create a keyboard shortcut (CTRL+ALT+SHIFT+F1) for this
-from GNOME settings. You can logout to exit GNOME and return to ChromeOS.
+from GNOME settings. You can logout to exit Fedora and return to ChromeOS.
 
 **How do I switch to Fedora?**
 
