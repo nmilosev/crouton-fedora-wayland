@@ -51,12 +51,6 @@ mv -f "$newenv" "$oldenv"
 # On release upgrade, keyboard-configuration might be reconfigured.
 fixkeyboardmode
 
-#
-echo 'Doing a dnf distro-sync against Fedora 23 repository so you are up to date'
-dnf distro-sync -y --refresh
-echo 'Installing additional packages'
-dnf install sudo wget nano -y
-
 # Generate and set default locale
 if [ ! -f '/etc/default/locale' ] && hash locale-gen 2>/dev/null; then
     locale-gen --lang en_US.UTF-8

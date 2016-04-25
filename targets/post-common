@@ -25,29 +25,29 @@ if [ ! -f '/etc/crouton/core_pattern' ]; then
 $core_pattern" > '/etc/crouton/core_pattern'
 fi
 
-echo 'Cleaning up...' 1>&2
-dnf clean all
-
 #fix dbus
 mkdir /var/run/dbus
+dbus-uuidgen > /etc/machine-id
 
 mkdir /home/fedora
 #fedora blue prompt:
 echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' > /home/fedora/.bash_profile
+
 #fix permissions
 chown fedora /home/fedora
 chown fedora /home/fedora/.bash_profile
 
-if [ -n "$TIPS" ]; then
-    echo "
-$(echo_color "b" "Here's some tips:")
-$TIPS" 1>&2
-fi
+#dnf stuff:
+echo
+echo "Fedora is installed now!"
+echo
+echo "Getting DNF metadata and installing sudo..."
+dnf install sudo -y
 
 rm -f "$0"
 
 echo
-echo 'Modified Crouton script for Fedora 23 - 2016 January 28th'
+echo 'Modified Crouton script for Fedora 23 (using Fedora Builder (Koji) tarball) - 2016 April 25rd'
 echo 'http://nmilosev.svbtle.com'
 echo
 echo 'Default user and root passwords are: fedora'

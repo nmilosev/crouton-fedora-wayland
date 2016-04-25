@@ -10,8 +10,12 @@ if [ -z "$ARCH" ]; then
     ARCH="`uname -m | sed -e 's i.86 i386 ;s arm.* armhfp ;'`"
 fi
 
+# Latest Koji builds are here:
+# Find the one for your arch and substitute is below! Look for Fedora-Docker-Base
+# http://koji.fedoraproject.org/koji/tasks?owner=ausil&state=closed&view=flat&method=createImage&order=-id
+
 if [ -z "$MIRROR" ]; then
-    MIRROR="${CROUTON_MIRROR_fedora:-http://mirror.vutbr.cz/fedora/releases/23/Workstation/$ARCH/os}"
+    MIRROR="${CROUTON_MIRROR_fedora:-https://kojipkgs.fedoraproject.org//work/tasks/9930/13769930/Fedora-Docker-Base-23-20160423.x86_64.tar.xz}"
 fi
 
 

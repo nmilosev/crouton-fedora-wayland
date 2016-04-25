@@ -62,30 +62,6 @@ remove_dist() {
 # ensure we are in /
 cd /
 
-# Before we install the packages with rpm we need to delete some files
-# so we don't get the backup files *.-
-# TODO:
-#rm -rf /etc/group /etc/gshadow /etc/passwd /etc/shadow
-
-# Overriding $basearch for yum if a different architecture is defined for
-# creating the chroot.
-# echo $ARCH > /etc/yum/vars/basearch
-
-# Reinstall all packages with rpm
-for rpm in *.rpm; do
-    /usr/bin/rpm -i --nodeps --nosignature "$rpm"
-    echo 'Installing: ' "$rpm"
-done
-
-# Remove all manually downloaded rpm packages
-rm /*.rpm
-
-# import public gpg keys for yum (included in package fedora-release)
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
-
-# Create a default rc.local with some commands to let fedora work on
-# crouton.
-# TODO: Fix this.
 cat > '/etc/rc.local' <<EOF
 #!/bin/sh -e
 #
@@ -113,8 +89,3 @@ chmod +x /etc/rc.local
 
 umount '/var/run/lock' '/var/run'
 rm -rf --one-file-system /var/run/*
-    
-
-
-
-

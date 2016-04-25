@@ -10,14 +10,13 @@ sudo dnf install xorg-x11-drv-intel* xorg-x11-drv-synaptics* -y
 #install GNOME group with DNF, you can substitute this with a DE of your choice
 #but don't forget to modify the xinitrc file
 #gnome-terminal is broken, and installing firefox on chromeos feels dirty so we install terminator and midori
-sudo dnf groupinstall "Fedora Workstation" --exclude=gnome-terminal,firefox -y
-sudo dnf install terminator midori -y
+sudo dnf groupinstall "XFCE Desktop" -y
 
 #install croutonfreon a.k.a. 'black magic from the dark side'
 sudo cp $dir/croutonfreon.so /usr/local/lib/croutonfreon.so
 
 #create shortcut for launching x with croutonpowerd which will prevent chromebook from sleeping
-#if you dont have freon and still have X server running (lucky bastard) you should be able to run x with
+#if you dont have freon and still have X server running (lucky bastard) you should be able to run x with dbus-X11
 cat > $dir/freonx.sh <<- EOM
 #!/bin/sh
 #start trigger service:
@@ -33,9 +32,8 @@ sudo chmod +x /usr/local/bin/freonx
 sudo ln -s /usr/local/bin/host-dbus /bin/host-dbus
 
 #create xinitrc and give it to root
-#if you didn't install GNOME change this, ex. 'exec startxfce4' for xfce
 cat > /home/fedora/.xinitrc <<- EOM
-exec gnome-session
+exec startxfce4
 EOM
 
 sudo su -c 'cp /home/fedora/.xinitrc /root/.xinitrc'
@@ -65,10 +63,10 @@ sudo ln -s /usr/local/bin/crouton-noroot /bin/crouton-noroot
 #tips
 echo
 echo 'Done'
-echo 'Launch GNOME with the command freonx'
+echo 'Launch XFCE with the command freonx'
 echo 'Dont forget to set a keyboard shortcut for "croutoncycle cros" for returning to ChromeOS'
 echo 'Sound works you can control volume with command volume'
 echo 'You can control brightness with command brightness'
-echo 'You can enable tap to click from the GNOME settings!'
-echo 'To exit GNOME just logout'
+echo 'You can enable tap to click from the XFCE settings!'
+echo 'To exit, just logout'
 echo 'Have fun, and send patches!'

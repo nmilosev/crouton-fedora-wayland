@@ -53,7 +53,7 @@ Installation
 cd ~/Downloads
 wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
 tar xvf crouton-fedora.tar.gz
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora23
 ```
 
 This install the CLI version. To enter Fedora: ```sudo enter-chroot```
@@ -62,8 +62,8 @@ A good practice is to also include a parameter ```-p``` to install this Crouton 
 since it breaks the official Crouton if you have it installed. For example:
 
 ```
-sudo mkdir /mnt/stateful_partition/crouton-fedora
-sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora -p /mnt/stateful_partition/crouton-fedora
+sudo mkdir /usr/local/crouton-fedora
+sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora23 -p /usr/local
 ```
 
 Please consult the offical Crouton documentation for this.

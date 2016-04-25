@@ -8,72 +8,40 @@
 # directory), $INSTALLERDIR/$DISTRO, $RELEASE, $BOOTSTRAP_RELEASE (if different
 # from $RELEASE), $ARCH, and $MIRROR.
 
-# Get the repomd.xml from the mirror to extract primary.xml location/filename.
-wget "$MIRROR/repodata/repomd.xml" -nv -O "$tmp"/repomd.xml
-for c in `xmllint --xpath "//*[name()='location']/@href" $tmp/repomd.xml`; do
-    echo $c | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 >> $tmp/repomd.txt
-done
+# get Docker build
+echo
+echo "Getting Docker build from Koji..."
+echo
 
-# Download -primary.xml.gz which will contain the package links and unpack it.
-wgetvar=$(grep -E "\-primary.xml.gz$" "$tmp/repomd.txt")
-wget "$MIRROR/$wgetvar" -q -O "$tmp/primary.xml.gz"
-gunzip -vf $tmp/primary.xml.gz
+wget $MIRROR -O "$tmp/docker-fedora.tar.xz"
 
-# Parse the primary.xml to create a list with all the packages.
-echo 'Preparing filelist from mirror this takes a few moments'
-for c in `xmllint --xpath "//*[name()='location']/@href" $tmp/primary.xml`; do
-    echo $c | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 >> $tmp/filelist.txt
-done
+cd $tmp
 
-# Add path so scripts in $tmp can be called without full path name
-newpath="$PATH:$tmp"
+echo "Extracting the downloaded tarball..."
+tar xf "$tmp/docker-fedora.tar.xz" --strip-components=1
 
-# Add the necessary debootstrap executables and packages required list
-cp "$INSTALLERDIR/$DISTRO/bash_rpm_cpio.sh" "$INSTALLERDIR/$DISTRO/bash_cpio.sh" \
-    "$INSTALLERDIR/$DISTRO/fedora_rpms_req.txt" "$tmp/"
-chmod 755 "$tmp/bash_rpm_cpio.sh" "$tmp/bash_cpio.sh"
+# delete the remains
+rm "$tmp/docker-fedora.tar.xz"
+rm json
+rm VERSION
 
-# Create $subdir
+cd - > /dev/null
+
+echo "Extracting filesystem..."
+
 mkdir -p "$tmp"/"$subdir"
-
-# Determine packages full names including version: Then gather packages for chroot environment
-# Packages we need are from running the following yum command:
-# yum --installroot=~/fedora install yum yum-utils vim-minimal
-# Then there are some additional that are also needed.
-# Those packages are listed in the fedora_rpms_req.txt under yum-utils
-echo 'Downloading packages required for bootstrap'
-while read -r name;
-do
-    # Search the package in the downloaded filelist.txt and download the package we need.
-    if wgetvar=$(grep -E "Packages/[a-z,0-9]/$name"-[0-9] "$tmp"/filelist.txt); then
-        echo 'Downloading RPM :' ${wgetvar##*/}
-        wget "$MIRROR/$wgetvar" -q -O "$tmp"/"$subdir"/${wgetvar##*/}
-    fi
-done < "$tmp"/fedora_rpms_req.txt
-
-# Announce all packages downloaded
-echo 'Download rpm packages needed complete.'
-
-(
-# Now in sub shell
-# All scripts and packages are now in $tmp: cd into $tmp/$subdir to create chroot filesystem and extract packages via scripts
 cd "$tmp/$subdir"
 
-# filesystem*.rpm package must be extracted first, or bootstrap filesystem will not suit the RPM package manager
-echo 'Creating fedora ready filesystem'
-"$tmp"/bash_rpm_cpio.sh "$tmp"/"$subdir"/filesystem*.rpm | "$tmp"/bash_cpio.sh -idm
+tar xfp "$tmp"/layer.tar
 
-# Extraction of packages into chroot filesystem with bash_rpm_cpio and bash_cpio scripts.
-echo 'Extracting packages into created file system'
-find "$tmp"/"$subdir" -type f -name '*.rpm' | xargs -n1 -ifile sh -c ""$tmp"/bash_rpm_cpio.sh file | "$tmp"/bash_cpio.sh -idm"
-
-)
-
+echo "Extracting finished!"
+cd - > /dev/null
 
 #fixing groups and users
 echo 'Fixing groups and users'
 
 rm "$tmp/$subdir/etc/group"
+
 cp $INSTALLERDIR/$DISTRO/group "$tmp/$subdir/etc/group"
 
 rm "$tmp/$subdir/etc/gshadow"
