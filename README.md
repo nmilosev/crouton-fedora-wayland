@@ -53,7 +53,7 @@ Installation
 cd ~/Downloads
 wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
 tar xvf crouton-fedora.tar.gz
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora23
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora23
 ```
 
 **Important: This is the new version with the Koji image build!**
@@ -102,7 +102,7 @@ script for more details. It works very well for me but it might not work for you
 you can always run a local VNC server (check my blog in the useful links section) but it is much slower
 than the real deal.
 
-From the chroot:
+From the chroot (as fedora user):
 
 ```
 sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
