@@ -63,7 +63,8 @@ since it breaks the official Crouton if you have it installed. For example:
 
 ```
 sudo mkdir /usr/local/crouton-fedora
-sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora23 -p /usr/local
+sudo sh ./crouton-fedora/installer/main.sh -r fedora23 -t fedora23 -p /usr/local/crouton-fedora
+sudo sh /usr/local/crouton-fedora/bin/enter-chroot
 ```
 
 Please consult the offical Crouton documentation for this.
