@@ -56,7 +56,11 @@ tar xvf crouton-fedora.tar.gz
 sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora23
 ```
 
-This install the CLI version. To enter Fedora: ```sudo enter-chroot```
+**Important: This is the new version with the Koji image build!**
+
+**The default freonx DE is XFCE now, but you can still change it in the ```install.sh```**
+
+This installs the CLI version. To enter Fedora: ```sudo enter-chroot```
 
 A good practice is to also include a parameter ```-p``` to install this Crouton to the non-default path
 since it breaks the official Crouton if you have it installed. For example:
