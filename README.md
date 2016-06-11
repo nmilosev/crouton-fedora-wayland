@@ -35,6 +35,10 @@ The Crouton Fedora chrome app and VNC instructions:
 
 http://nmilosev.svbtle.com/fedora-crouton-connector-chrome-app
 
+Installing VirtualBox:
+
+https://nmilosev.svbtle.com/virtualbox-and-crouton-fedora
+
 A word of warning
 =================================================
 
@@ -60,7 +64,7 @@ sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora23
 
 **The default freonx DE is XFCE now, but you can still change it in the ```install.sh```**
 
-**To install Fedora 24 daily build substitute the path to the Fedora 24 Docker image in the ```default``` file (as described there)**
+**To install Fedora 24 daily build substitute the path to the Fedora 24 Docker image in the ```defaults``` file (as described there). I've been runing Fedora 24 for some time now, and it's been rock solid. Fedora 24 will be default soon.**
 
 This installs the CLI version. To enter Fedora: ```sudo enter-chroot```
 
@@ -95,9 +99,9 @@ sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
 
 Check if the script outputed errors, and try to fix them.
 
-Run ```freonx``` to start GNOME.
+Run ```freonx``` to start the installed DE/WM.
 
-Things that are working:
+Things that are working for me:
 
 - video
 - audio
@@ -138,15 +142,16 @@ Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
 **How much space do I need?**
 
 - ~3GB for the GNOME + CLI installation.
+- ~2GB for the XFCE + CLI installation.
 - ~500MB for CLI only.
 
 **How to install other DE's?**
 
-Modify ```install.sh``` script. It's really easy!
+Modify ```install.sh``` script. It's really easy! Modify the DNF group to install and the ```.xinitrc``` part.
 
 **My download is slow or not working...**
 
-Modify the ```default``` file in ```installater/fedora``` folder. You can find mirrors on the
+Modify the ```defaults``` file in ```installater/fedora``` folder. You can find mirrors on the
 fedora mirror list site.
 
 **What about Wine?**
@@ -157,10 +162,6 @@ Wine works fine. I've sucessfully installed Photoshop CS6 through the PlayOnLinu
 
 You can install an i686 chroot onto a x86_64 Chromebook. Specify ```-a i386``` to the installer. This way it will take
 much less space, and you really don't lose anything. You will also need to run dnf with [BROKEN AT THE MOMENT DNF DOESN'T RESPECT]
-
-**What about VirtualBox?**
-
-VirtualBox would require a patched kernel, so please use the official Crouton if you need VirtualBox.
 
 How does it look like?
 ---
