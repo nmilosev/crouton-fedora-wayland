@@ -39,6 +39,10 @@ Installing VirtualBox:
 
 https://nmilosev.svbtle.com/virtualbox-and-crouton-fedora
 
+Running Docker:
+
+https://nmilosev.svbtle.com/docker-on-crouton-fedora-24
+
 A word of warning
 =================================================
 
