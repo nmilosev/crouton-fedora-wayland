@@ -10,7 +10,7 @@
 
 # get Docker build
 echo
-echo "Getting Docker build from Koji..."
+echo "Getting Docker build from Fedora Koji buildsystem..."
 echo
 
 wget $MIRROR -O "$tmp/docker-fedora.tar.xz"
@@ -52,3 +52,6 @@ cp $INSTALLERDIR/$DISTRO/shadow "$tmp/$subdir/etc/shadow"
 
 rm "$tmp/$subdir/etc/passwd"
 cp $INSTALLERDIR/$DISTRO/passwd "$tmp/$subdir/etc/passwd"
+
+# adding message for later
+cp $INSTALLERDIR/$DISTRO/fedoralogo.txt "$tmp/$subdir/etc/.fedoracroutonmsg"

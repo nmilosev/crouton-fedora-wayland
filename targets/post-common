@@ -46,10 +46,4 @@ dnf install sudo -y
 
 rm -f "$0"
 
-echo
-echo 'Modified Crouton script for Fedora 23 (using Fedora Builder (Koji) tarball) - 2016 April 25th'
-echo 'http://nmilosev.svbtle.com'
-echo
-echo 'Default user and root passwords are: fedora'
-echo 'Have fun!'
-echo
+cat /etc/.fedoracroutonmsg

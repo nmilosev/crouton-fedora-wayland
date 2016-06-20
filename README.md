@@ -61,14 +61,8 @@ Installation
 cd ~/Downloads
 wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
 tar xvf crouton-fedora.tar.gz
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora23
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora
 ```
-
-**Important: This is the new version with the Koji image build!**
-
-**The default freonx DE is XFCE now, but you can still change it in the ```install.sh```**
-
-**To install Fedora 24 daily build substitute the path to the Fedora 24 Docker image in the ```defaults``` file (as described there). I've been runing Fedora 24 for some time now, and it's been rock solid. Fedora 24 will be default soon.**
 
 This installs the CLI version. To enter Fedora: ```sudo enter-chroot```
 
@@ -77,7 +71,7 @@ since it breaks the official Crouton if you have it installed. For example:
 
 ```
 sudo mkdir /usr/local/crouton-fedora
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora23 -t fedora23 -p /usr/local/crouton-fedora
+sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora -p /usr/local/crouton-fedora
 sudo sh /usr/local/crouton-fedora/bin/enter-chroot
 ```
 
@@ -97,13 +91,16 @@ than the real deal.
 From the chroot (as fedora user):
 
 ```
-cd ~
-sudo sh ~/Downloads/crouton-fedora/freon-x/install.sh
+sudo sh /home/fedora/Downloads/crouton-fedora-master/freon-x/install.sh
 ```
 
 Check if the script outputed errors, and try to fix them.
 
 Run ```freonx``` to start the installed DE/WM.
+
+Top tip: run ```sudo enter-chroot freonx``` to go from crosh to Fedora desktop directly.
+
+Available are: GNOME, KDE, Xfce, LXDE, MATE, Cinnamon and they all work. You can also install a WM (like i3 or others) only. To install other DE's modify the variables at the top of ```install.sh``` script.
 
 Things that are working for me:
 
@@ -118,12 +115,9 @@ Things that are working for me:
 
 Broken stuff:
 
-- you have to run X as root (fedora related issue)
-- you have to manually configure tap to click from GNOME
+- you have to run X as root (fixed now! Was X server security related issue, see below)
 - you have to manually setup keybindings for going back to ChromeOS ```/bin/croutoncycle cros``` on CTRL+ALT+SHIFT+F1
-- fedora isn't very happy to run without systemd
-- not sure if it will work on non-Intel chromebook's
-- keyboard bindings (haven't bothered with this, cause I don't need this)
+- GNOME isn't very happy to run without systemd
 - switching can sometimes be "wonky"
 
 If you don't have Freon, you should be able to connect to the X server started by ChromeOS
@@ -143,6 +137,24 @@ from GNOME settings. You can logout to exit Fedora and return to ChromeOS.
 
 Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
 
+**How to run X as non root?**
+
+You can run X as non root, but there are some issues - nothing big. I will continue to try to fix this in the future.
+
+- Remove sudo from ```/usr/local/bin/freonx``` script and also change following permissions:
+
+```
+cat > /etc/X11/Xwrapper.config <<- EOM
+allowed_users=anybody
+needs_root_rights=yes
+EOM # this fixes the "Console users aren't allowed to run X"
+sudo chown 1000:1000 /tmp/ -R # this fixes croutonfreon errors for display management
+sudo chown 1000:1000 /usr/local/lib/croutonfreon.so # just in case
+cp /usr/libexec/Xorg /usr/bin/ # don't ask, it just works like that, fixes can't find /dev/tty0 error, could be Fedora specific
+```
+
+This is now all done by default! If you need to run X as root, use ```freonx-root.sh```.
+
 **How much space do I need?**
 
 - ~3GB for the GNOME + CLI installation.
@@ -151,7 +163,7 @@ Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
 
 **How to install other DE's?**
 
-Modify ```install.sh``` script. It's really easy! Modify the DNF group to install and the ```.xinitrc``` part.
+Modify ```install.sh``` script.
 
 **My download is slow or not working...**
 
@@ -161,6 +173,10 @@ fedora mirror list site.
 **What about Wine?**
 
 Wine works fine. I've sucessfully installed Photoshop CS6 through the PlayOnLinux Wine front-end.
+
+**Virtual Box/Docker?**
+
+Both work. Check the useful links section.
 
 **Architecture?**
 
