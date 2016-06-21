@@ -1,8 +1,7 @@
 #!/bin/sh
 #fix permissions:
 sudo chown 1000:1000 /usr/bin/Xorg
-sudo chown 1000:1000 /tmp/ -R
-sudo chown 1000:1000 /usr/local/lib/croutonfreon.so
+sudo chown 1000:1000 /tmp/crouton-lock -R
 #start trigger service:
 croutontriggerd &
 #startx:
