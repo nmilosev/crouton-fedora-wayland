@@ -75,7 +75,9 @@ sudo ln -s /usr/local/bin/crouton-noroot /bin/crouton-noroot
 #tips
 echo
 echo 'Done'
-echo 'Launch with the command freonx'
+echo 'Launch with the command freonx-root'
+echo 'You can also try freonx for running it as normal user. If you get black screen after logging out,'
+echo 'press CTRL+ALT+F2, then CTRL+ALT+F1'
 echo 'Dont forget to set a keyboard shortcut for "croutoncycle cros" for returning to ChromeOS'
 echo 'Sound works you can control volume with command volume'
 echo 'You can control brightness with command brightness'
