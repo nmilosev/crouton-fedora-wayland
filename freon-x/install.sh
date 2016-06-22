@@ -69,6 +69,12 @@ sudo ln -s /usr/local/bin/croutontriggerd /bin/croutontriggerd
 #allow powerd
 sudo ln -s /usr/local/bin/crouton-noroot /bin/crouton-noroot
 
+#patching intel drivers:
+inteldrv=/usr/lib64/xorg/modules/drivers/intel_drv.so
+offset="`grep -F -m 1 -boa 'geteuid' "$inteldrv" 2>/dev/null || true`"
+sudo chmod 777 $inteldrv
+sudo echo -n 'getuid0' | dd seek="${offset%:*}" bs=1 of="$inteldrv" conv=notrunc,nocreat
+
 #tips
 echo
 echo 'Done'
