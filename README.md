@@ -98,7 +98,7 @@ Check if the script outputed errors, and try to fix them.
 
 Run ```sudo freonx``` to start the installed DE/WM.
 
-Top tip: run ```sudo enter-chroot sudo freonx``` to go from crosh to Fedora desktop directly.
+Top tip: run ```sudo enter-chroot su -c '/usr/local/bin/freonx'``` to go from crosh to Fedora desktop directly.
 
 Available are: GNOME, KDE, Xfce, LXDE, MATE, Cinnamon and they all work. You can also install a WM (like i3 or others) only. To install other DE's modify the variables at the top of ```install.sh``` script.
 
