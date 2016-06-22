@@ -96,9 +96,9 @@ sudo sh /home/fedora/Downloads/crouton-fedora-master/freon-x/install.sh
 
 Check if the script outputed errors, and try to fix them.
 
-Run ```sudo freonx``` to start the installed DE/WM.
+Run ```freonx``` to start the installed DE/WM.
 
-Top tip: run ```sudo enter-chroot su -c '/usr/local/bin/freonx'``` to go from crosh to Fedora desktop directly.
+Top tip: run ```sudo enter-chroot freonx``` to go from crosh to Fedora desktop directly.
 
 Available are: GNOME, KDE, Xfce, LXDE, MATE, Cinnamon and they all work. You can also install a WM (like i3 or others) only. To install other DE's modify the variables at the top of ```install.sh``` script.
 
@@ -139,8 +139,6 @@ Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
 
 **How to run X as non root?**
 
-You can run X as non root, but there are some issues - nothing big. I will continue to try to fix this in the future.
-
 - Needed changes:
 
 ```
@@ -148,11 +146,19 @@ cat > /etc/X11/Xwrapper.config <<- EOM
 allowed_users=anybody
 needs_root_rights=yes
 EOM # this fixes the "Console users aren't allowed to run X"
+
 sudo chown 1000:1000 /tmp/ -R # this fixes croutonfreon errors for display management
+
 cp /usr/libexec/Xorg /usr/bin/ # don't ask, it just works like that, fixes can't find /dev/tty0 error, could be Fedora specific
+
+#patching intel drivers:
+inteldrv=/usr/lib64/xorg/modules/drivers/intel_drv.so
+offset="`grep -F -m 1 -boa 'geteuid' "$inteldrv" 2>/dev/null || true`"
+sudo chmod 777 $inteldrv
+sudo echo -n 'getuid0' | dd seek="${offset%:*}" bs=1 of="$inteldrv" conv=notrunc,nocreat
 ```
 
-This is now all done by default! If you need to run X as root, use ```sudo freonx```. Switching is broken when running as normal user for now. When you logout the screen will be black. To get back to ChromeOS press CTRL+ALT+F2 and then CTRL+ALT+F1. I will try to fix this.
+This is now all done by default! If you need to run X as root, use ```sudo freonx```.
 
 **How much space do I need?**
 
