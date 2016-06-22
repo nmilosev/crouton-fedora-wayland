@@ -96,9 +96,9 @@ sudo sh /home/fedora/Downloads/crouton-fedora-master/freon-x/install.sh
 
 Check if the script outputed errors, and try to fix them.
 
-Run ```freonx-root``` to start the installed DE/WM.
+Run ```sudo freonx``` to start the installed DE/WM.
 
-Top tip: run ```sudo enter-chroot freonx-root``` to go from crosh to Fedora desktop directly.
+Top tip: run ```sudo enter-chroot sudo freonx``` to go from crosh to Fedora desktop directly.
 
 Available are: GNOME, KDE, Xfce, LXDE, MATE, Cinnamon and they all work. You can also install a WM (like i3 or others) only. To install other DE's modify the variables at the top of ```install.sh``` script.
 
@@ -141,7 +141,7 @@ Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
 
 You can run X as non root, but there are some issues - nothing big. I will continue to try to fix this in the future.
 
-- Remove sudo from ```/usr/local/bin/freonx``` script and also change following permissions:
+- Needed changes:
 
 ```
 cat > /etc/X11/Xwrapper.config <<- EOM
@@ -152,7 +152,7 @@ sudo chown 1000:1000 /tmp/ -R # this fixes croutonfreon errors for display manag
 cp /usr/libexec/Xorg /usr/bin/ # don't ask, it just works like that, fixes can't find /dev/tty0 error, could be Fedora specific
 ```
 
-This is now all done by default! If you need to run X as root, use ```freonx-root.sh```. Switching is broken when running as normal user for now. When you logout the screen will be black. To get back to ChromeOS press CTRL+ALT+F2 and then CTRL+ALT+F1.
+This is now all done by default! If you need to run X as root, use ```sudo freonx```. Switching is broken when running as normal user for now. When you logout the screen will be black. To get back to ChromeOS press CTRL+ALT+F2 and then CTRL+ALT+F1. I will try to fix this.
 
 **How much space do I need?**
 

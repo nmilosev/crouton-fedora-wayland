@@ -18,5 +18,5 @@ fi
 # ARM images are available as well as 32-bit images
 
 if [ -z "$MIRROR" ]; then
-    MIRROR="${CROUTON_MIRROR_fedora:-https://kojipkgs.fedoraproject.org//work/tasks/9569/14499569/Fedora-Docker-Base-24-20160615.n.0.x86_64.tar.xz}"
+    MIRROR="${CROUTON_MIRROR_fedora:-https://kojipkgs.fedoraproject.org//work/tasks/6155/14516155/Fedora-Docker-Base-24-20160616.n.0.x86_64.tar.xz}"
 fi

@@ -27,9 +27,6 @@ sudo cp $dir/croutonfreon.so /usr/local/lib/croutonfreon.so
 sudo cp $dir/freonx.sh /usr/local/bin/freonx
 sudo chmod +x /usr/local/bin/freonx
 
-sudo cp $dir/freonx-root.sh /usr/local/bin/freonx-root
-sudo chmod +x /usr/local/bin/freonx-root
-
 #allow root to use host-dbus
 sudo ln -s /usr/local/bin/host-dbus /bin/host-dbus
 
@@ -75,7 +72,7 @@ sudo ln -s /usr/local/bin/crouton-noroot /bin/crouton-noroot
 #tips
 echo
 echo 'Done'
-echo 'Launch with the command freonx-root'
+echo 'Launch with the command sudo freonx'
 echo 'You can also try freonx for running it as normal user. If you get black screen after logging out,'
 echo 'press CTRL+ALT+F2, then CTRL+ALT+F1'
 echo 'Dont forget to set a keyboard shortcut for "croutoncycle cros" for returning to ChromeOS'
