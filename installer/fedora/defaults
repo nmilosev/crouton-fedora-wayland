@@ -17,7 +17,7 @@ fi
 #
 # ARM images are available as well as 32-bit images
 
-# this is a stock fedora 24 docker image (see issue #6) 
+# this is a stock fedora 25 docker image (see issue #6) 
 if [ -z "$MIRROR" ]; then
-    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/24/Docker/x86_64/images/Fedora-Docker-Base-24-1.2.x86_64.tar.xz}"
+    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/25/Docker/x86_64/images/Fedora-Docker-Base-25-1.3.x86_64.tar.xz}"
 fi
