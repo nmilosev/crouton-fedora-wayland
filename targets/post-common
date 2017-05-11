@@ -31,9 +31,18 @@ dbus-uuidgen > /etc/machine-id
 
 mkdir /home/fedora
 #fedora blue prompt:
-echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' > /home/fedora/.bash_profile
+touch /home/fedora/.bash_profile
+echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' >> /home/fedora/.bash_profile
+# Wayland!
+echo 'export XDG_RUNTIME_DIR=/var/host/chrome' >> /home/fedora/.bash_profile
+echo "alias wayland='weston --backend=wayland-backend.so --fullscreen'" >> /home/fedora/.bash_profile
+echo 'export GDK_BACKEND=wayland' >> /home/fedora/.bash_profile
+echo 'export QT_QPA_PLATFORM=wayland-egl' >> /home/fedora/.bash_profile
+echo 'export CLUTTER_BACKEND=wayland' >> /home/fedora/.bash_profile
+echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
+echo 'clear' >> /home/fedora/.bash_profile
 
-# Wayland support (needed environment variables):
+ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
 
 #fix permissions
 chown fedora /home/fedora
