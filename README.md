@@ -97,6 +97,15 @@ Wayland
 Wayland support is built in directly. If you only want CLI you have to modify the installation files or use
 the old version. Search for "# Wayland support:" comment!
 
+Some applications (GNOME) can actually run on ChromeOS without a compositor. Others will require Xwayland.
+
+For native Wayland applications, just run them from shell. 
+
+To start the compositor type `wayland`, there is an alias setup. Weston will start in full screen, but it is just
+a Chrome OS window, you can easily make it smaller or Alt+Tab from it. There are sometimes issues with double cursor
+appearing, which I am looking into, sorry. To close Weston, you can close its window from ChromeOS multitasking view
+or just Ctrl+C into crouton shell.
+
 FAQ:
 ---
 
@@ -121,7 +130,7 @@ Both work. Check the useful links section.
 
 License
 -------
-crouton (including this eloquently-written README) is copyright &copy; 2016 The
+crouton (including this eloquently-written README) is copyright &copy; 2017 The
 crouton Authors. All rights reserved. Use of the source code included here is
 governed by a BSD-style license that can be found in the LICENSE file in the
 source tree.
