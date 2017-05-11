@@ -736,4 +736,4 @@ if [ -f "$PREPARE" ]; then
     sh -e "$HOSTBINDIR/enter-chroot" -c "$CHROOTS" -n "$NAME" -xx
 fi
 
-echo "Done! You can enter the chroot using enter-chroot." 1>&2
+echo "Done! You can enter the chroot by 'sudo enter-chroot'. Once inside use 'wayland' to start Weston compositor." 1>&2
