@@ -10,7 +10,7 @@
 
 # get Docker build
 echo
-echo "Getting Docker build from Fedora Koji buildsystem..."
+echo "Getting Docker build from Fedora official repositories..."
 echo
 
 wget $MIRROR -O "$tmp/docker-fedora.tar.xz"

@@ -1,10 +1,12 @@
-crouton-fedora: Crouton version for Fedora
+crouton-fedora-wayland: Crouton version for Fedora
 =================================================
 
 This is a modified version of Crouton which installs Fedora onto your Chromebook.
 This version isn't nearly as polished as the main version of Crouton with Debian/Ubuntu.
 Please don't use this if you aren't familiar with the Crouton project as it is much better
-than this version.
+than this version. This specific version ditches the old X server with Freon idea, and uses
+Wayland which is built-in in the latest couple of versions of Chrome OS. It is much simpler
+and actually faster.
 
 Disclaimer
 =================================================
@@ -19,6 +21,10 @@ https://github.com/divx118/crouton/tree/fedora
 
 I am eternally grateful for these versions, and all the credits should go to their authors.
 I merely played with them and modified them a bit.
+
+Original Crouton Fedora:
+
+https://github.com/nmilosev/crouton-fedora
 
 Useful links
 =================================================
@@ -43,13 +49,16 @@ Running Docker:
 
 https://nmilosev.svbtle.com/docker-on-crouton-fedora-24
 
+Crouton + Fedora + Wayland = YES.:
+
+https://nmilosev.svbtle.com/TBA
+
 A word of warning
 =================================================
 
 If you want maximum stability, please use official Crouton and install Debian or Ubuntu.
-This may break with an update or might not even work at all. CLI stuff is pretty reliable,
-while the X stuff isn't. Things may break at anytime. This needs a lot more work.
-You have been warned.
+This may break with an update or might not even work at all. Things may break at anytime. 
+This needs a lot more work. You have been warned.
 
 Installation
 =================================================
@@ -59,12 +68,14 @@ Installation
 
 ```
 cd ~/Downloads
-wget https://github.com/nmilosev/crouton-fedora/archive/master.tar.gz -O crouton-fedora.tar.gz
-tar xvf crouton-fedora.tar.gz
-sudo sh ./crouton-fedora-master/installer/main.sh -r fedora -t fedora
+wget https://github.com/nmilosev/crouton-fedora-wayland/archive/master.tar.gz -O crouton-fedora-wayland.tar.gz
+tar xvf crouton-fedora-wayland.tar.gz && rm crouton-fedora-wayland.tar.gz
+sudo sh ./crouton-fedora-wayland-master/installer/main.sh -r fedora -t fedora
 ```
 
-This installs the CLI version. To enter Fedora: ```sudo enter-chroot```
+This installs the CLI version and support for Wayland. 
+
+To enter Fedora: ```sudo enter-chroot```
 
 A good practice is to also include a parameter ```-p``` to install this Crouton to the non-default path
 since it breaks the official Crouton if you have it installed. For example:
@@ -80,85 +91,14 @@ Please consult the offical Crouton documentation for this.
 With this paramter, you can also install Crouton Fedora onto your sd card or your USB drive. Just please
 remember, that performace will be greatly reduced if your SD card/USB drive is slow.
 
-Graphics installation (GNOME/XFCE/anything)
-=================================================
+Wayland
+---
 
-Tested only on mine Intel-based chromebook with Freon, please see the ```freon-x/install.sh```
-script for more details. It works very well for me but it might not work for you. If it doesn't work,
-you can always run a local VNC server (check my blog in the useful links section) but it is much slower
-than the real deal.
-
-From the chroot (as fedora user):
-
-```
-sudo sh /home/fedora/Downloads/crouton-fedora-master/freon-x/install.sh
-```
-
-Check if the script outputed errors, and try to fix them.
-
-Run ```freonx``` to start the installed DE/WM.
-
-Top tip: run ```sudo enter-chroot freonx``` to go from crosh to Fedora desktop directly.
-
-Available are: GNOME, KDE, Xfce, LXDE, MATE, Cinnamon and they all work. You can also install a WM (like i3 or others) only. To install other DE's modify the variables at the top of ```install.sh``` script.
-
-Things that are working for me:
-
-- video
-- audio
-- mouse and keyboard
-- bluetooth/wifi
-- suspend-resume
-- switching back to chromeOS with a keyboard shortcut
-- switching back to Fedora with a keyboard shortcut
-- 3D hardware acceleration
-
-Broken stuff:
-
-- you have to run X as root (fixed now! Was X server security related issue, see below)
-- you have to manually setup keybindings for going back to ChromeOS ```/bin/croutoncycle cros``` on CTRL+ALT+SHIFT+F1
-- GNOME isn't very happy to run without systemd
-- switching can sometimes be "wonky"
-
-If you don't have Freon, you should be able to connect to the X server started by ChromeOS
-with the included ```host-X11``` command from Crouton.
-
-Tip: Use Fedy to install stuff. It works great with Fedora.
+Wayland support is built in directly. If you only want CLI you have to modify the installation files or use
+the old version. Search for "# Wayland support:" comment!
 
 FAQ:
 ---
-
-**How do I switch back?**
-
-Type ```croutoncycle cros``` to the terminal. Tip: create a keyboard shortcut (CTRL+ALT+SHIFT+F1) for this
-from GNOME settings. You can logout to exit Fedora and return to ChromeOS.
-
-**How do I switch to Fedora?**
-
-Type ```croutoncycle :0``` to another terminal or press CTRL+ALT+SHIFT+F2.
-
-**How to run X as non root?**
-
-- Needed changes:
-
-```
-cat > /etc/X11/Xwrapper.config <<- EOM
-allowed_users=anybody
-needs_root_rights=yes
-EOM # this fixes the "Console users aren't allowed to run X"
-
-sudo chown 1000:1000 /tmp/ -R # this fixes croutonfreon errors for display management
-
-cp /usr/libexec/Xorg /usr/bin/ # don't ask, it just works like that, fixes can't find /dev/tty0 error, could be Fedora specific
-
-#patching intel drivers:
-inteldrv=/usr/lib64/xorg/modules/drivers/intel_drv.so
-offset="`grep -F -m 1 -boa 'geteuid' "$inteldrv" 2>/dev/null || true`"
-sudo chmod 777 $inteldrv
-sudo echo -n 'getuid0' | dd seek="${offset%:*}" bs=1 of="$inteldrv" conv=notrunc,nocreat
-```
-
-This is now all done by default! If you need to run X as root, use ```sudo freonx```.
 
 **How much space do I need?**
 
@@ -166,13 +106,9 @@ This is now all done by default! If you need to run X as root, use ```sudo freon
 - ~2GB for the XFCE + CLI installation.
 - ~500MB for CLI only.
 
-**How to install other DE's?**
-
-Modify ```install.sh``` script.
-
 **My download is slow or not working...**
 
-Modify the ```defaults``` file in ```installater/fedora``` folder. You can find mirrors on the
+Modify the ```defaults``` file in ```installer/fedora``` folder. You can find mirrors on the
 fedora mirror list site.
 
 **What about Wine?**
@@ -182,20 +118,6 @@ Wine works fine. I've sucessfully installed Photoshop CS6 through the PlayOnLinu
 **Virtual Box/Docker?**
 
 Both work. Check the useful links section.
-
-**Architecture?**
-
-You can install an i686 chroot onto a x86_64 Chromebook. Specify ```-a i386``` to the installer. This way it will take
-much less space, and you really don't lose anything. You will also need to run dnf with [BROKEN AT THE MOMENT DNF DOESN'T RESPECT]
-
-How does it look like?
----
-![Imgur](http://i.imgur.com/J9RzbVo.jpg)
-
-How does it perform?
----
-
-Extremely well. You can't tell it is running inside chroot as with the original Crouton.
 
 License
 -------

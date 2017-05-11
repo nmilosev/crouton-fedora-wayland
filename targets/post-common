@@ -33,6 +33,8 @@ mkdir /home/fedora
 #fedora blue prompt:
 echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' > /home/fedora/.bash_profile
 
+# Wayland support (needed environment variables):
+
 #fix permissions
 chown fedora /home/fedora
 chown fedora /home/fedora/.bash_profile
@@ -41,8 +43,12 @@ chown fedora /home/fedora/.bash_profile
 echo
 echo "Fedora is installed now!"
 echo
-echo "Getting DNF metadata and installing sudo..."
-dnf install sudo -y
+echo "Getting DNF metadata and installing sudo, passwd..."
+dnf install sudo passwd -y
+
+echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
+
+dnf install weston xorg-x11-server-Xwayland -y
 
 rm -f "$0"
 

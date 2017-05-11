@@ -21,6 +21,8 @@
 # All targets must be idempotent since the user may Ctrl-C the process and run
 # it again.
 
+# NOTHING FEDORA RELATED IS HERE
+
 if [ -z "$TARGET" ]; then
     TARGET="$0"
     SIMULATE=echo
