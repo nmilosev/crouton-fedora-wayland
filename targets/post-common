@@ -59,6 +59,12 @@ echo "Wayland support (run weston-terminal to test, wayland to start weston comp
 
 dnf install weston xorg-x11-server-Xwayland -y
 
+mkdir -p /home/fedora/.config
+touch /home/fedora/.config/weston.ini
+# Weston config to support XWayland
+echo '[core]' >> /home/fedora/.config/weston.ini
+echo 'modules=xwayland.so' >> /home/fedora/.config/weston.ini
+
 rm -f "$0"
 
 cat /etc/.fedoracroutonmsg
