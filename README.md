@@ -49,9 +49,9 @@ Running Docker:
 
 https://nmilosev.svbtle.com/docker-on-crouton-fedora-24
 
-Crouton + Fedora + Wayland = YES.:
+Crouton Fedora + Wayland. Yes, please!:
 
-https://nmilosev.svbtle.com/TBA
+https://nmilosev.svbtle.com/crouton-fedora-wayland-yes-please
 
 A word of warning
 =================================================
