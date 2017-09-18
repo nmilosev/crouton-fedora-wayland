@@ -21,5 +21,5 @@ fi
 
 # Wayland support: (need F26 for new GTK3)
 if [ -z "$MIRROR" ]; then
-    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/26/Docker/x86_64/images/Fedora-Docker-Base-26-1.5.x86_64.tar.xz}"
+    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/26/Docker/$ARCH/images/Fedora-Docker-Base-26-1.5.$ARCH.tar.xz}"
 fi
