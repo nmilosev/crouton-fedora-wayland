@@ -7,7 +7,7 @@
 # It must set at least ARCH and MIRROR if not already specified.
 
 if [ -z "$ARCH" ]; then
-    ARCH="`uname -m | sed -e 's i.86 i386 ;s arm.* armhfp ;'`"
+    ARCH="`uname -m | sed -e 's i.86 i386 ;s arm.* armhfp ;s aarch64 armhfp '`"
 fi
 
 # Latest Koji builds
