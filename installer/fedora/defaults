@@ -17,9 +17,6 @@ fi
 #
 # ARM images are available as well as 32-bit images
 
-# this is a stock fedora 25 docker image (see issue #6) 
-
-# Wayland support: (need F26 for new GTK3)
 if [ -z "$MIRROR" ]; then
-    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/26/Docker/$ARCH/images/Fedora-Docker-Base-26-1.5.$ARCH.tar.xz}"
+    MIRROR="${CROUTON_MIRROR_fedora:-https://download.fedoraproject.org/pub/fedora/linux/releases/27/Docker/$ARCH/images/Fedora-Docker-Base-27-1.6.$ARCH.tar.xz}"
 fi
