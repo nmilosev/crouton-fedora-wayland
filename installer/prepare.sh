@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -94,7 +94,7 @@ distropkgs() {
             done
         done
         # Print out the result or error out if nothing found
-        if [ ! "$pkgname" = '.' ]; then
+        if [ "$pkgname" != '.' ]; then
             echo -n "$pkgname "
         else
             error 2 "Nothing specified for $DISTRO~$RELEASE in '$descriptor'"
@@ -191,7 +191,7 @@ fixkeyboardmode() {
 compile() {
     local out="/usr/local/bin/crouton$1"
     local linker="$2"
-    local cflags='-xc -Os'
+    local cflags='-xc -Os -I/usr/src/crouton'
     if [ "$3" = 'so' ]; then
         out="/usr/local/lib/crouton$1.so"
         cflags="$cflags -shared -fPIC"

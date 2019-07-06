@@ -13,7 +13,7 @@ echo
 echo "Getting Docker build from Fedora official repositories..."
 echo
 
-wget $MIRROR -O "$tmp/docker-fedora.tar.xz"
+curl -L -o "$tmp/docker-fedora.tar.xz" $MIRROR
 
 cd $tmp
 
