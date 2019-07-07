@@ -1,0 +1,3 @@
+[submodule "crouton"]
+	path = crouton
+	url = https://github.com/boydkelly/crouton.git
