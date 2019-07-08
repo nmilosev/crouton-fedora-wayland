@@ -4,7 +4,8 @@
 # found in the LICENSE file.
 REQUIRES=''
 DESCRIPTION='Performs a Fedora (CLI) installation.'
-CHROOTBIN='croutonpowerd croutonversion host-dbus croutoncycle croutontriggerd croutonnotify volume crouton-noroot'
+CHROOTBIN='croutonpowerd croutonversion host-dbus croutoncycle croutontriggerd croutonnotify volume crouton-noroot host-wayland gnome-session-wrapper'
+
 . "${TARGETSDIR:="$PWD"}/common"
 
 ### Append to prepare.sh:

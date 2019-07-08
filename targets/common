@@ -89,7 +89,6 @@ elif [ -z "$TARGETNOINSTALL" -o -n "$RESTOREHOSTBIN" ]; then
         $SIMULATE cp -fP "$src" "$CHROOT/etc/crouton/"
         [ ! -h "$src" ] && $SIMULATE chmod 644 "$CHROOT/etc/crouton/$f"
     done
-
     # Copy all the source files to chroot
     $SIMULATE rm -rf "$CHROOT/usr/src/crouton"
     $SIMULATE cp -afP "${SRCDIR:-../src}" "$CHROOT/usr/src/crouton"

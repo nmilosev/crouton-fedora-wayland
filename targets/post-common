@@ -30,7 +30,7 @@ fi
 
 #fix dbus
 mkdir /var/run/dbus
-dbus-uuidgen > /etc/machine-id
+uuidgen > /etc/machine-id
 
 mkdir /home/fedora
 #fedora blue prompt:
@@ -42,6 +42,7 @@ echo "alias wayland='weston --backend=wayland-backend.so --fullscreen'" >> /home
 echo 'export GDK_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export QT_QPA_PLATFORM=wayland-egl' >> /home/fedora/.bash_profile
 echo 'export CLUTTER_BACKEND=wayland' >> /home/fedora/.bash_profile
+echo 'export WAYLAND_DISPLAY=wayland-0' >> /home/fedora/.bash_profile
 echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
 echo 'clear' >> /home/fedora/.bash_profile
 
