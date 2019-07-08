@@ -19,5 +19,4 @@ fi
 
 if [ -z "$MIRROR" ]; then
     MIRROR="${CROUTON_MIRROR_fedora:-https://dl.fedoraproject.org/pub/fedora/linux/releases/30/Container/x86_64/images/Fedora-Container-Base-30-1.2.x86_64.tar.xz}"
-    MIRROR="${CROUTON_MIRROR_fedora:-http://mirrors.kernel.org/fedora/releases/30/Container/x86_64/images/Fedora-Container-Base-30-1.2.x86_64.tar.xz}"
 fi

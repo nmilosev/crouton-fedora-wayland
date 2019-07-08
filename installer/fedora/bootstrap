@@ -14,12 +14,11 @@ echo "Getting container build from Fedora official repositories..."
 echo
 echo $MIRROR
 #if ! curl -N -f -L --connect-timeout 60 --retry 2 "$MIRROR" \
-#        | tar -vC "$tmp" --exclude json --exclude VERSION 2>&-; then
+#        | tar -C "$tmp" --exclude json --exclude VERSION 2>&-; then
 #    error 1 'Failed to download fedora.
 #Check your internet connection or proxy settings and try again.'
 #fi
 
-export http_proxy=http://192.168.2.1:3128
 cd $tmp
 
 curl -N -f -L -# --connect-timeout 60 --retry 2 $MIRROR -O
