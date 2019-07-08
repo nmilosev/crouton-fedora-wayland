@@ -352,10 +352,6 @@ bindmount /tmp /tmp exec
 bindmount /proc
 tmpfsmount /var/run 'noexec,nosuid,mode=0755,size=10%'
 tmpfsmount /var/run/lock 'noexec,nosuid,nodev,size=5120k'
-
-# Wayland support:
-bindmount /var/run/chrome /var/host/chrome
-
 bindmount /var/run/dbus /var/host/dbus
 bindmount /var/run/shill /var/host/shill
 bindmount /var/lib/timezone /var/host/timezone
@@ -387,6 +383,7 @@ else
 WARNING: CRAS not running in Chromium OS. Audio forwarding will not work." 1>&2
 fi
 
+#Wayland support here
 if [ -d /var/run/chrome ]; then
     bindmount /var/run/chrome /var/host/chrome
     # Add a /var/host/chrome symlink for display clients
