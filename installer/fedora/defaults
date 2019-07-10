@@ -11,7 +11,7 @@ if [ -z "$ARCH" ]; then
 fi
 
 # Latest Koji builds
-# Find the one for your arch and substitute is below! Look for Fedora-Docker-Base
+# Find the one for your arch and substitute is below! Look for Fedora-Container-Base
 #
 # http://koji.fedoraproject.org/koji/tasks?owner=releng&state=all&view=flat&method=createImage&order=-id
 #
