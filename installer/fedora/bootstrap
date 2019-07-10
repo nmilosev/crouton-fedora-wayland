@@ -10,20 +10,25 @@
 
 # get Docker build
 echo
-echo "Getting Docker build from Fedora official repositories..."
+echo "Getting container build from Fedora official repositories..."
 echo
+echo $MIRROR
+#if ! curl -N -f -L --connect-timeout 60 --retry 2 "$MIRROR" \
+#        | tar -vC "$tmp" --exclude json --exclude VERSION 2>&-; then
+#    error 1 'Failed to download fedora.
+#Check your internet connection or proxy settings and try again.'
+#fi
 
-curl -L -o "$tmp/docker-fedora.tar.xz" $MIRROR
-
+export http_proxy=http://192.168.2.1:3128
 cd $tmp
 
+curl -N -f -L -# --connect-timeout 60 --retry 2 $MIRROR -O
+
 echo "Extracting the downloaded tarball..."
-tar xf "$tmp/docker-fedora.tar.xz" --strip-components=1
+tar xf *.tar.xz --strip-components=1 --exclude json --exclude VERSION
 
 # delete the remains
-rm "$tmp/docker-fedora.tar.xz"
-rm json
-rm VERSION
+rm *.tar.xz
 
 cd - > /dev/null
 
