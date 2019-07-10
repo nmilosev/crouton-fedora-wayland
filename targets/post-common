@@ -59,12 +59,9 @@ echo
 echo "Fedora is installed now!"
 echo
 echo "Getting DNF metadata and installing sudo, passwd..."
-dnf install sudo passwd -y
+dnf install sudo passwd -y 
 
 echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
-
-#do we need dbus-x11 here?  Checking...
-dnf install weston xorg-x11-server-Xwayland -y
 
 mkdir -p /home/fedora/.config
 touch /home/fedora/.config/weston.ini
@@ -72,6 +69,7 @@ touch /home/fedora/.config/weston.ini
 echo '[core]' >> /home/fedora/.config/weston.ini
 echo 'modules=xwayland.so' >> /home/fedora/.config/weston.ini
 
+dnf install weston xorg-x11-server-Xwayland dbus-daemon -y
+
 rm -f "$0"
 
-cat /etc/.fedoracroutonmsg
