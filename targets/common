@@ -90,6 +90,7 @@ elif [ -z "$TARGETNOINSTALL" -o -n "$RESTOREHOSTBIN" ]; then
         [ ! -h "$src" ] && $SIMULATE chmod 644 "$CHROOT/etc/crouton/$f"
     done
     # Copy all the source files to chroot
+    # Here we delete only the source files; not the directory.  This keeps the common file identical to upstream
     $SIMULATE rm -rf "$CHROOT/usr/src/crouton"
     $SIMULATE cp -afP "${SRCDIR:-../src}" "$CHROOT/usr/src/crouton"
 
