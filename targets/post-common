@@ -88,3 +88,5 @@ echo "Wayland support (run weston-terminal to test, wayland to start weston comp
 
 rm -f "$0"
 
+cat /etc/.fedoracroutonmsg	
+
