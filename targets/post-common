@@ -18,9 +18,6 @@ HOSTBIN="$HOSTBIN crash_reporter_wrapper"
 # Set the default coredump handler
 if [ ! -f '/etc/crouton/core_pattern' ]; then
     core_pattern=''
-    if [ "$DISTRO" = 'ubuntu' ]; then
-        core_pattern='|/usr/share/apport/apport %p %s %c'
-    fi
     echo "\
 # The first non-comment line is the core_pattern that applies to this chroot.
 # See man 5 core for details.
