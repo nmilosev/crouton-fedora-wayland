@@ -25,13 +25,16 @@ if [ ! -f '/etc/crouton/core_pattern' ]; then
 $core_pattern" > '/etc/crouton/core_pattern'
 fi
 
-#fix dbus
+#fix dbus 
 mkdir /var/run/dbus
 #dbus-uuidgen not availble... in Fedora found in dbus-x11 package
 #but this will do the trick
 uuidgen | cut -c -32 > /etc/machine-id
 
+#fedora user
 mkdir /home/fedora
+cp -rT /etc/skel /home/fedora
+
 #fedora blue prompt:
 touch /home/fedora/.bash_profile
 echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' >> /home/fedora/.bash_profile
@@ -45,16 +48,31 @@ echo 'export WAYLAND_DISPLAY=wayland-0' >> /home/fedora/.bash_profile
 echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
 echo 'clear' >> /home/fedora/.bash_profile
 
-ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
+#lets use fedora .bashrc
+#ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
+
+mkdir -p /home/fedora/.config
+touch /home/fedora/.config/weston.ini
+# Weston config to support XWayland
+echo '[core]' >> /home/fedora/.config/weston.ini
+#This is the new way
+echo 'xwayland=true' >> /home/fedora/.config/weston.ini
 
 #fix permissions
-chown fedora /home/fedora
-chown fedora /home/fedora/.bash_profile
+chown -R fedora:fedora /home/fedora
 
 #fix slow login (may be changed with elogind)
 sed -i -e "s/^passwd:.*/passwd:    files/g" /etc/nsswitch.conf
 sed -i -e "s/^shadow:.*/shadow:    files/g" /etc/nsswitch.conf
 sed -i -e "s/^group:.*/group:    files/g" /etc/nsswitch.conf
+
+#fix groups
+#This should be in main.sh, but I don't want to touch that
+#Crouton wants a plugdev, messagebus sudo and wayland group.  Lets just fix it here
+#instead of in the passwd files.  
+groupadd -r -o -g 81 messagebus && useradd -r -o -g 81 -u 81 messagebus
+groupadd -r -g 28 sudo 
+usermod -aG wheel,wayland,sudo,plugdev,audio,video,input,crouton,wayland fedora
 
 echo
 echo "Fedora is installed now!"
@@ -62,9 +80,11 @@ echo
 echo "Getting DNF metadata and installing sudo, passwd..."
 dnf install sudo passwd -y 
 
-echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
+#allow fedora to sudo su - to root
+echo %sudo   "ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 dnf install weston xorg-x11-server-Xwayland qt5-qtwayland dbus-daemon -y
+echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
 
 rm -f "$0"
 
