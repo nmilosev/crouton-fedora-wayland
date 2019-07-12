@@ -67,13 +67,7 @@ dnf install sudo passwd -y
 
 echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
 
-mkdir -p /home/fedora/.config
-touch /home/fedora/.config/weston.ini
-# Weston config to support XWayland
-echo '[core]' >> /home/fedora/.config/weston.ini
-echo 'modules=xwayland.so' >> /home/fedora/.config/weston.ini
-
-dnf install weston xorg-x11-server-Xwayland dbus-daemon -y
+dnf install weston xorg-x11-server-Xwayland qt5-qtwayland dbus-daemon -y
 
 rm -f "$0"
 
