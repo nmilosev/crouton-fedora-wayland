@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 REQUIRES=''
 DESCRIPTION='Performs a Fedora (CLI) installation with Wayland support.'
-CHROOTBIN='croutonpowerd croutonversion host-dbus croutoncycle croutontriggerd croutonnotify volume crouton-noroot croutonfindnacl'
+CHROOTBIN='croutonpowerd croutonversion host-dbus croutoncycle croutontriggerd croutonnotify volume crouton-noroot croutonfindnacl startxwayland'
 
 . "${TARGETSDIR:="$PWD"}/common"
 

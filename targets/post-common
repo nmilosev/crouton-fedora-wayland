@@ -45,6 +45,7 @@ echo 'export GDK_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export QT_QPA_PLATFORM=wayland-egl' >> /home/fedora/.bash_profile
 echo 'export CLUTTER_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export WAYLAND_DISPLAY=wayland-0' >> /home/fedora/.bash_profile
+echo 'export DISPLAY=:0
 echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
 echo 'clear' >> /home/fedora/.bash_profile
 
@@ -52,11 +53,14 @@ echo 'clear' >> /home/fedora/.bash_profile
 #ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
 
 mkdir -p /home/fedora/.config
-touch /home/fedora/.config/weston.ini
 # Weston config to support XWayland
-echo '[core]' >> /home/fedora/.config/weston.ini
+cat >> /home/fedora/.config/weston.ini <<EOF
+[core]
 #This is the new way
-echo 'xwayland=true' >> /home/fedora/.config/weston.ini
+xwayland=true
+[shell]
+background=/usr/share/backgrounds/f30/default/normalish/f30.png
+EOF
 
 #fix permissions
 chown -R fedora:fedora /home/fedora
@@ -74,6 +78,12 @@ groupadd -r -o -g 81 messagebus && useradd -r -o -g 81 -u 81 messagebus
 groupadd -r -g 28 sudo 
 usermod -aG wheel,wayland,sudo,plugdev,audio,video,input,crouton,wayland fedora
 
+#tweaks to save disk space
+#dnf save all metadata to /tmp on a chromebook we dont care
+echo "cach_dir=/tmp" >> /etc/dnf/dnf.conf
+echo "install_weak_deps=0" >>/etc/dnf/dnf.conf
+echo "fastest_mirror=1" >> /etc/dnf/dnf.conf
+
 echo
 echo "Fedora is installed now!"
 echo
@@ -85,6 +95,8 @@ echo %sudo   "ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 dnf install weston xorg-x11-server-Xwayland qt5-qtwayland dbus-daemon -y
 echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
+
+echo "for Xwayland, start Xwayland from a command prompt.  It will launch full screen but you may use alt-tab to switch between Xwayland, Chromos, and Wayland native apps.  The F5 key (desktop overview/app switcher) works too!"
 
 rm -f "$0"
 
