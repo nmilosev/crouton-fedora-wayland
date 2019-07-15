@@ -54,10 +54,14 @@ echo 'clear' >> /home/fedora/.bash_profile
 # Weston config to support XWayland
 cat >> /home/fedora/.config/weston.ini <<EOF
 [core]
-#This is the new way
 xwayland=true
+
 [shell]
-background=/usr/share/backgrounds/f30/default/normalish/f30.png
+background-image=/usr/share/backgrounds/f30/default/normalish/f30.png
+num-workspaces=4
+
+[libinput]
+enable_tap=true
 EOF
 
 #fix permissions
