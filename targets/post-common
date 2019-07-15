@@ -93,7 +93,7 @@ dnf install sudo passwd -y
 #allow fedora to sudo su - to root
 echo %sudo   "ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
-dnf install weston xorg-x11-server-Xwayland qt5-qtwayland egl-wayland dbus-daemonf30-backgrounds-base -y
+dnf install weston xorg-x11-server-Xwayland qt5-qtwayland egl-wayland dbus-daemon f30-backgrounds-base -y
 echo "Wayland support (run wayland to start weston compositor full screen; weston will start in a window)"
 
 echo "for Xwayland, start Xwayland from a command prompt.  It will launch full screen but you may use alt-tab to switch between Xwayland, Chromeos, and Wayland native apps.  The F5 key (desktop overview/app switcher) works too!"
