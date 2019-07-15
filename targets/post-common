@@ -21,7 +21,6 @@ if [ ! -f '/etc/crouton/core_pattern' ]; then
     echo "\
 # The first non-comment line is the core_pattern that applies to this chroot.
 # See man 5 core for details.
-
 $core_pattern" > '/etc/crouton/core_pattern'
 fi
 
@@ -32,7 +31,7 @@ mkdir /var/run/dbus
 uuidgen | cut -c -32 > /etc/machine-id
 
 #fedora user
-mkdir /home/fedora
+mkdir -p /home/fedora/.config
 cp -rT /etc/skel /home/fedora
 
 #fedora blue prompt:
@@ -45,14 +44,13 @@ echo 'export GDK_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export QT_QPA_PLATFORM=wayland-egl' >> /home/fedora/.bash_profile
 echo 'export CLUTTER_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export WAYLAND_DISPLAY=wayland-0' >> /home/fedora/.bash_profile
-echo 'export DISPLAY=:0
+echo 'export DISPLAY=:0' >> /home/fedora/.bash_profile
 echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
 echo 'clear' >> /home/fedora/.bash_profile
 
 #lets use fedora .bashrc
 #ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
 
-mkdir -p /home/fedora/.config
 # Weston config to support XWayland
 cat >> /home/fedora/.config/weston.ini <<EOF
 [core]
@@ -93,8 +91,8 @@ dnf install sudo passwd -y
 #allow fedora to sudo su - to root
 echo %sudo   "ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
+echo "Wayland support (run wayland to start weston compositor full screen; run weston will start in a window)"
 dnf install weston xorg-x11-server-Xwayland qt5-qtwayland egl-wayland dbus-daemon f30-backgrounds-base -y
-echo "Wayland support (run wayland to start weston compositor full screen; weston will start in a window)"
 
 echo "for Xwayland, start Xwayland from a command prompt.  It will launch full screen but you may use alt-tab to switch between Xwayland, Chromeos, and Wayland native apps.  The F5 key (desktop overview/app switcher) works too!"
 
