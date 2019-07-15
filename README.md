@@ -95,7 +95,7 @@ With this paramter, you can also install Crouton Fedora onto your sd card or you
 Wayland
 ---
 
-Wayland support is built in directly. If you only want a CLI you have to modify the installation files. Search for "# Wayland support:" comment!
+Wayland support is built in directly. If you only want a CLI you have to modify the installation files. 
 
 Some applications (GNOME) can actually run on ChromeOS without a compositor. Others will require Xwayland.  
 
@@ -110,7 +110,7 @@ FAQ:
 
 - ~3GB for the GNOME + CLI installation.
 - ~2GB for the XFCE + CLI installation.
-- ~500MB for CLI only.
+- ~700MB for CLI only.
 
 **My download is slow or not working...**
 
@@ -124,13 +124,21 @@ Some major apps that work great are:  Firefox, Meld, Libreoffice, Totem (gnome-v
 
 If you want a Wayland terminal, try Sakura, and other Wayland terminals.  Gnome-terminal doesn't work yet....
 
+Run Xwayland to support X11 apps.  If you want an X11 desktop such as i3 or *box, you can install that, edit your .xintrc and then startxwayland.  Not all dependencies are pulled in.  You may have to manually install the following packages:
+-hostname
+-xorg-x11-xauth
+-xorg-x11-xinit-session
+-xorg-x11-xinit
+
+Weston works fine on my hardware although it complains it wants egl.  If *I* install mesa-dri-drivers which provide this, then Weston becomes slow to the point of not being functional.  My workaround is to remove mesa-dri-drivers.  YMMV.
+
 **What notably doesn't work?  (yet....)
 
-- Full oWayland gnome-shell desktop.  It should... but we're not there yet.
+- Full Wayland gnome-shell desktop.  It should... but we're not there yet.
 
 - Nautilus.  Looks great, and it *is* snappy and functional but for some weird reason drag-and-drop doesn't work.
 
-- X11 apps  XWayland is work in progress...
+- Some X11 apps like gvim or emacs... Sorry! 
 
 **Virtual Box/Docker?**
 
