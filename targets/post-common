@@ -82,7 +82,7 @@ usermod -aG wheel,wayland,sudo,plugdev,audio,video,input,crouton,wayland fedora
 
 #tweaks to save disk space
 #dnf save all metadata to /tmp on a chromebook we dont care
-echo "cach_dir=/tmp" >> /etc/dnf/dnf.conf
+echo "cache_dir=/tmp" >> /etc/dnf/dnf.conf
 echo "install_weak_deps=0" >>/etc/dnf/dnf.conf
 echo "fastest_mirror=1" >> /etc/dnf/dnf.conf
 
