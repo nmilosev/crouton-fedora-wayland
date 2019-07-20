@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -8,8 +8,8 @@ set -e
 APPLICATION="${0##*/}"
 ALLCHROOTS=''
 BACKUP=''
-BINDIR="`dirname "\`readlink -f "$0"\`"`"
-CHROOTS="`readlink -m "$BINDIR/../chroots"`"
+BINDIR="`dirname "\`readlink -f -- "$0"\`"`"
+CHROOTS="`readlink -m -- "$BINDIR/../chroots"`"
 DELETE=''
 ENCRYPT=''
 KEYFILE=''
@@ -95,7 +95,7 @@ while getopts_nextarg; do
 done
 
 # If the executable name is delete*, assume DELETE.
-if [ ! "${APPLICATION#delete}" = "$APPLICATION" ]; then
+if [ "${APPLICATION#delete}" != "$APPLICATION" ]; then
     DELETE='y'
     NEEDS_UNMOUNT='y'
 fi
@@ -162,7 +162,7 @@ if [ -n "$BACKUP$RESTORE" -a -z "$TARBALL" -a "$PWD" = '/' \
 fi
 
 # If multiple chroots are listed, KEYFILE and MOVE and COPY must be empty or directories.
-if [ $# -gt 1 -a -f "$KEYFILE" -a ! "$KEYFILE" = '-' ]; then
+if [ $# -gt 1 -a -f "$KEYFILE" -a "$KEYFILE" != '-' ]; then
     error 2 "Multiple chroots specified, but $KEYFILE is not a directory."
 elif [ $# -gt 1 -a -n "$MOVE" -a "${MOVE%/}" = "$MOVE" ]; then
     error 2 "Multiple chroots specified, but $MOVE is not a directory."
@@ -197,7 +197,7 @@ if [ -n "$BACKUP" ] && ! df -T "`getmountpoint "${TARBALL:-.}"`" \
 fi
 
 # We need to run as root
-if [ ! "$USER" = root -a ! "$UID" = 0 ]; then
+if [ "$USER" != root -a "$UID" != 0 ]; then
     error 2 "$APPLICATION must be run as root."
 fi
 
@@ -263,7 +263,7 @@ fi
 
 # If TARBALL ends in a slash or we're restoring multiple chroots, make directory
 if [ -n "$TARBALL" ] && \
-        [ $# -ge 2 -o -d "$TARBALL" -o ! "${TARBALL%/}" = "$TARBALL" ]; then
+        [ $# -ge 2 -o -d "$TARBALL" -o "${TARBALL%/}" != "$TARBALL" ]; then
     TARBALL="${TARBALL%/}/"
     mkdir -p "$TARBALL"
 fi
@@ -334,7 +334,8 @@ for NAME in "$@"; do
             fi
             if [ "$getversion" = 'y' ]; then
                 CROUTON_NO_UNMOUNT=1 sh "$BINDIR/enter-chroot" \
-                    -c "$CHROOTS" -n "$NAME" -x /usr/local/bin/croutonversion
+                    -c "$CHROOTS" -n "$NAME" -x /usr/local/bin/croutonversion \
+                    || true
             fi
         fi
         if [ "$RESTORE" = 1 ]; then
@@ -402,7 +403,7 @@ for NAME in "$@"; do
             tardest="$dest"
             splitpid=''
         fi
-        echo -n "  Backing up $CHROOT to $dest..." 1>&2
+        echo -n "  Backing up $CHROOT to $(readlink -m -- "$dest")..." 1>&2
         addtrap "echo 'Deleting partial archive.' 1>&2; \
                  kill '$splitpid' 2>/dev/null; rm -f '$dest' '$dest.part-'*"
         ret=0
@@ -508,7 +509,7 @@ for NAME in "$@"; do
         if [ "${newkeyfile#/}" = "$newkeyfile" ]; then
             newkeyfile="$PWD/$newkeyfile"
         fi
-        if [ -d "$newkeyfile" -o ! "${newkeyfile%/}" = "$newkeyfile" ]; then
+        if [ -d "$newkeyfile" -o "${newkeyfile%/}" != "$newkeyfile" ]; then
             newkeyfile="${newkeyfile%/}/$NAME"
         fi
         oldkeyfile="`readlink -m -- "$oldkeyfile"`"
@@ -518,8 +519,8 @@ for NAME in "$@"; do
             if [ -z "$ENCRYPT" ]; then
                 error 1 "Old key file not found"
             fi
-        elif [ ! "$oldkeyfile" = "$keyfilecanon" ]; then
-            chrootecryptfsfile="`readlink -m "$CHROOT/.ecryptfs"`"
+        elif [ "$oldkeyfile" != "$keyfilecanon" ]; then
+            chrootecryptfsfile="`readlink -m -- "$CHROOT/.ecryptfs"`"
             # Don't clobber a file already there
             if [ -e "$newkeyfile" -a "$newkeyfile" != "$chrootecryptfsfile" ]; then
                 error 1 "Encryption key file $newkeyfile already exists. Refusing to overwrite!"
@@ -563,7 +564,7 @@ for NAME in "$@"; do
                 error 2 "Invalid target chroot name '$target'."
             fi
             target="$CHROOTS/$target"
-        elif [ ! "${target%/}" = "$target" ]; then
+        elif [ "${target%/}" != "$target" ]; then
             # Ends in a slash; append name.
             target="$target$NAME"
         fi
@@ -620,7 +621,7 @@ for NAME in "$@"; do
                 error 2 "Invalid target chroot name '$target'."
             fi
             target="$CHROOTS/$target"
-        elif [ ! "${target%/}" = "$target" ]; then
+        elif [ "${target%/}" != "$target" ]; then
             # Ends in a slash; append name.
             target="$target$NAME"
         fi

@@ -1,18 +1,18 @@
 #!/bin/sh -e
-# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 set -e
 
 APPLICATION="${0##*/}"
-BINDIR="`dirname "\`readlink -f "$0"\`"`"
-CHROOTS="`readlink -m "$BINDIR/../chroots"`"
+BINDIR="`dirname "\`readlink -f -- "$0"\`"`"
+CHROOTS="`readlink -m -- "$BINDIR/../chroots"`"
 CREATE=''
 ENCRYPT=''
 KEYFILE=''
 PRINT=''
-ROOT="`readlink -m '/var/run/crouton'`"
+ROOT="`readlink -m -- '/var/run/crouton'`"
 MOUNTOPTS='rw,dev,exec,suid'
 
 USAGE="$APPLICATION [options] name [...]
@@ -51,12 +51,33 @@ if [ $# = 0 ]; then
 fi
 
 # We need to run as root
-if [ ! "$USER" = root -a ! "$UID" = 0 ]; then
+if [ "$USER" != root -a "$UID" != 0 ]; then
     error 2 "$APPLICATION must be run as root."
 fi
 
 # Make sure we always exit with echo on the tty.
 addtrap "stty echo 2>/dev/null"
+
+# Whitelists a directory for symlink and other hardening
+whitelist() {
+    # As of 67, symlinks and fifos are blocked in stateful partitions.
+    # Add exceptions for this chroot.
+    local sec='/sys/kernel/security' mounted=''
+    if mountpoint -q "$sec"; then
+        mounted=y
+    elif ! mount -n -t securityfs -o nodev,noexec,nosuid securityfs "$sec"; then
+        return
+    fi
+    policies="$sec/chromiumos/inode_security_policies"
+    if [ -d "$policies" ]; then
+        for policy in "$policies/allow_"*; do
+            printf "$CHROOT" > "$policy"
+        done
+    fi
+    if [ -z "$mounted" ]; then
+        umount "$sec"
+    fi
+}
 
 # Function to prompt the user for a passphrase. Sets $passphrase.
 promptNewPassphrase() {
@@ -72,7 +93,7 @@ promptNewPassphrase() {
         echo_tty ''
         echo_tty -n 'Please confirm your passphrase: '
         read -r confirmation
-        if [ ! "$confirmation" = "$passphrase" ]; then
+        if [ "$confirmation" != "$passphrase" ]; then
             passphrase=''
             echo_tty ''
             echo_tty -n 'Passphrases do not match; try again: '
@@ -128,6 +149,8 @@ for NAME in "$@"; do
         if [ -z "$ENCRYPT" ]; then
             mount --bind "$CHROOTSRC" "$CHROOT"
             mount -i -o "remount,$MOUNTOPTS" "$CHROOT"
+            mount --make-private "$CHROOT"
+            whitelist "$CHROOT"
             continue
         fi
 
@@ -158,7 +181,7 @@ for NAME in "$@"; do
         elif [ "${KEYFILE#/}" = "$KEYFILE" ]; then
             KEYFILE="$PWD/$KEYFILE"
         fi
-        if [ -d "$KEYFILE" -o ! "${KEYFILE%/}" = "$KEYFILE" ]; then
+        if [ -d "$KEYFILE" -o "${KEYFILE%/}" != "$KEYFILE" ]; then
             KEYFILE="${KEYFILE%/}/$NAME"
         fi
         if ! mkdir -p "`dirname "$KEYFILE"`"; then
@@ -214,8 +237,10 @@ $passphrase" | ecryptfs-wrap-passphrase "$wrappedfnek" -
             addtrap "rm -f '$wrappedkey' '$wrappedfnek'"
 
             # Extract wrapped keys from keyfile
-            tail -c 160 "$KEYFILE" | head -c 80 > "$wrappedkey"
-            tail -c 80 "$KEYFILE" > "$wrappedfnek"
+            wrappedtotal="$(($(wc -c < "$KEYFILE") - $(head -n 1 "$KEYFILE" | wc -c)))"
+            wrappedsize="$((wrappedtotal / 2))"
+            tail -c "$wrappedtotal" "$KEYFILE" | head -c "$wrappedsize" > "$wrappedkey"
+            tail -c "$wrappedsize" "$KEYFILE" > "$wrappedfnek"
 
             # Change the passphrase if requested
             if [ "${ENCRYPT:-0}" -ge 2 ]; then
@@ -247,6 +272,11 @@ $passphrase" | ecryptfs-rewrap-passphrase "$wrappedfnek" -
             error 1 "Failed to decrypt $NAME."
         fi
 
+        # Create a new session, and link user keyring to that session,
+        # as required by ecryptfs.
+        keyctl new_session >/dev/null
+        keyctl link @u @s
+
         mnt="ecryptfs_sig=$keysig,ecryptfs_fnek_sig=$fneksig"
         mnt="$mnt,ecryptfs_cipher=aes,ecryptfs_key_bytes=16"
         mnt="$mnt,ecryptfs_unlink_sigs,$MOUNTOPTS"
@@ -254,6 +284,8 @@ $passphrase" | ecryptfs-rewrap-passphrase "$wrappedfnek" -
         if ! mount -i -t ecryptfs -o "$mnt" "$CHROOTSRC" "$CHROOT"; then
             error 1 "Failed to mount $NAME."
         fi
+
+        whitelist "$CHROOT"
     fi
 
     # Perform the move
@@ -262,7 +294,7 @@ $passphrase" | ecryptfs-rewrap-passphrase "$wrappedfnek" -
     fi
     response=y
     for file in "$movesrc/"*; do
-        if [ ! "${file#*/ECRYPTFS_FNEK_ENCRYPTED}" = "$file" ]; then
+        if [ "${file#*/ECRYPTFS_FNEK_ENCRYPTED}" != "$file" ]; then
             echo -n \
 "About to continue encrypting the unencrypted portion of $NAME.
 If this is unexpected, then it could mean that someone's trying to inject files

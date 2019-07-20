@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -21,15 +21,19 @@ if [ ! -f '/etc/crouton/core_pattern' ]; then
     echo "\
 # The first non-comment line is the core_pattern that applies to this chroot.
 # See man 5 core for details.
-
 $core_pattern" > '/etc/crouton/core_pattern'
 fi
 
-#fix dbus
+#fix dbus 
 mkdir /var/run/dbus
-dbus-uuidgen > /etc/machine-id
+#dbus-uuidgen not availble... in Fedora found in dbus-x11 package
+#but this will do the trick
+uuidgen | cut -c -32 > /etc/machine-id
 
-mkdir /home/fedora
+#fedora user
+mkdir -p /home/fedora/.config
+cp -rT /etc/skel /home/fedora
+
 #fedora blue prompt:
 touch /home/fedora/.bash_profile
 echo 'PS1="\[\e[34;1m\][\u@\h \W]$ \[\e[0m\]"' >> /home/fedora/.bash_profile
@@ -39,32 +43,64 @@ echo "alias wayland='weston --backend=wayland-backend.so --fullscreen'" >> /home
 echo 'export GDK_BACKEND=wayland' >> /home/fedora/.bash_profile
 echo 'export QT_QPA_PLATFORM=wayland-egl' >> /home/fedora/.bash_profile
 echo 'export CLUTTER_BACKEND=wayland' >> /home/fedora/.bash_profile
+echo 'export WAYLAND_DISPLAY=wayland-0' >> /home/fedora/.bash_profile
+echo 'export DISPLAY=:0' >> /home/fedora/.bash_profile
 echo 'mkdir /tmp/.X11-unix/' >> /home/fedora/.bash_profile
 echo 'clear' >> /home/fedora/.bash_profile
 
-ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
+#lets use fedora .bashrc
+#ln -s /home/fedora/.bash_profile /home/fedora/.bashrc 
+
+# Weston config to support XWayland
+cat >> /home/fedora/.config/weston.ini <<EOF
+[core]
+xwayland=true
+
+[shell]
+background-image=/usr/share/backgrounds/f30/default/normalish/f30.png
+num-workspaces=4
+
+[libinput]
+enable_tap=true
+EOF
 
 #fix permissions
-chown fedora /home/fedora
-chown fedora /home/fedora/.bash_profile
+chown -R fedora:fedora /home/fedora
 
-#dnf stuff:
+#fix slow login (may be changed with elogind)
+sed -i -e "s/^passwd:.*/passwd:    files/g" /etc/nsswitch.conf
+sed -i -e "s/^shadow:.*/shadow:    files/g" /etc/nsswitch.conf
+sed -i -e "s/^group:.*/group:    files/g" /etc/nsswitch.conf
+
+#fix groups
+#This should be in main.sh, but I don't want to touch that
+#Crouton wants a plugdev, messagebus sudo and wayland group.  Lets just fix it here
+#instead of in the passwd files.  
+groupadd -r -o -g 81 messagebus && useradd -r -o -g 81 -u 81 messagebus
+groupadd -r -g 28 sudo 
+usermod -aG wheel,wayland,sudo,plugdev,audio,video,input,crouton,wayland fedora
+
+#tweaks to save disk space
+#dnf save all metadata to /tmp on a chromebook we dont care
+echo "cache_dir=/tmp" >> /etc/dnf/dnf.conf
+echo "install_weak_deps=0" >>/etc/dnf/dnf.conf
+echo "fastest_mirror=1" >> /etc/dnf/dnf.conf
+
 echo
 echo "Fedora is installed now!"
 echo
 echo "Getting DNF metadata and installing sudo, passwd..."
-dnf install sudo passwd -y
+dnf install sudo passwd -y 
 
-echo "Wayland support (run weston-terminal to test, wayland to start weston compositor)"
+#allow fedora to sudo su - to root
+echo %sudo   "ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
-dnf install weston xorg-x11-server-Xwayland -y
+echo "Wayland support (run wayland to start weston compositor full screen; run weston will start in a window)"
+dnf install weston xorg-x11-server-Xwayland qt5-qtwayland egl-wayland dbus-daemon f30-backgrounds-base -y
 
-mkdir -p /home/fedora/.config
-touch /home/fedora/.config/weston.ini
-# Weston config to support XWayland
-echo '[core]' >> /home/fedora/.config/weston.ini
-echo 'modules=xwayland.so' >> /home/fedora/.config/weston.ini
+echo "for Xwayland, start Xwayland from a command prompt.  It will launch full screen but you may use alt-tab to switch between Xwayland, Chromeos, and Wayland native apps.  The F5 key (desktop overview/app switcher) works too!"
 
 rm -f "$0"
 
 cat /etc/.fedoracroutonmsg
+

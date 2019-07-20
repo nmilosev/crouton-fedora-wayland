@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright (c) 2015 The crouton Authors. All rights reserved.
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -22,6 +22,7 @@ DOWNLOADONLY=''
 ENCRYPT=''
 KEYFILE=''
 MIRROR=''
+MIRRORSET=''
 MIRROR2=''
 NAME=''
 PREFIX='/usr/local'
@@ -31,7 +32,8 @@ PROXY='unspecified'
 RELEASE=''
 RESTORE=''
 RESTOREBIN=''
-DEFAULTRELEASE='precise'
+DEFAULTRELEASE='xenial'
+PREVIOUS_DEFAULT_RELEASES='precise'
 TARBALL=''
 TARGETS=''
 TARGETFILE=''
@@ -119,7 +121,7 @@ while getopts 'a:bdef:k:m:M:n:p:P:r:s:t:T:uUV' f; do
     e) ENCRYPT="${ENCRYPT:-"-"}e";;
     f) TARBALL="$OPTARG";;
     k) KEYFILE="$OPTARG";;
-    m) MIRROR="$OPTARG";;
+    m) MIRROR="$OPTARG"; MIRRORSET='y';;
     M) MIRROR2="$OPTARG";;
     n) NAME="$OPTARG";;
     p) PREFIX="`readlink -m -- "$OPTARG"`"; PREFIXSET='y';;
@@ -136,12 +138,16 @@ done
 shift "$((OPTIND-1))"
 
 # Check against the minimum version of Chromium OS
-if ! awk -F= '/_RELEASE_BUILD_NUMBER=/ { exit int($2) < '"${CROS_MIN_VERS:-0}"' }' \
+if [ -n "$DOWNLOADONLY" ]; then
+    :
+elif ! grep -q '_RELEASE_BUILD_NUMBER=' /etc/lsb-release 2>/dev/null; then
+    error 2 "$APPLICATION can only be installed in the Chromium OS dev mode shell."
+elif ! awk -F= '/_RELEASE_BUILD_NUMBER=/ { exit int($2) < '"${CROS_MIN_VERS:-0}"' }' \
         '/etc/lsb-release' 2>/dev/null; then
     error 2 "Your version of Chromium OS is extraordinarily old.
 If there are updates pending, please reboot and try again.
 Otherwise, you may not be getting automatic updates, in which case you should
-post your update_engine.log from chrome://system to http://crbug.com/296768 and
+post your update_engine.log from chrome://system to http://crbug.com/new and
 restore your device using a recovery USB: https://goo.gl/AZ74hj"
 fi
 
@@ -164,6 +170,7 @@ if [ "$RELEASE" = 'list' -o "$RELEASE" = 'help' ]; then
             echo "$accum" 1>&2
         fi
     done
+    echo 'Releases marked with ! are upstream end-of-life, and should be avoided.' 1>&2
     echo 'Releases marked with * are unsupported, but may work with some effort.' 1>&2
     exit 2
 fi
@@ -205,7 +212,7 @@ if [ ! -d "$PREFIX" ]; then
 fi
 
 # There should never be any extra parameters.
-if [ ! $# = 0 ]; then
+if [ $# != 0 ]; then
     error 2 "$USAGE"
 fi
 
@@ -250,7 +257,7 @@ if [ -z "$DOWNLOADONLY" -a -n "$TARBALL" ]; then
         releasearch="${releasearch%%/*}"
     fi
     if [ "${releasearch#*-}" != "$releasearch" ]; then
-        ARCH="${releasearch#*-}"
+        ARCH="${releasearch##*-}"
         RELEASE="${releasearch%-*}"
     else
         RESTORE='y'
@@ -307,7 +314,7 @@ if [ -z "$DOWNLOADONLY" ]; then
                 fi
             done
             exit 2
-        elif [ ! "${TARGET%common}" = "$TARGET" ] || \
+        elif [ "${TARGET%common}" != "$TARGET" ] || \
              [ ! -r "$TARGETSDIR/$TARGET" ] || \
              ! (TARGETNOINSTALL="${UPDATE:-c}"; . "$TARGETSDIR/$TARGET"); then
             error 2 "Invalid target \"$TARGET\"."
@@ -330,7 +337,7 @@ else
     NOEXECTMP=n
 fi
 FAKEROOT=''
-if [ ! "$USER" = root -a ! "$UID" = 0 ]; then
+if [ "$USER" != root -a "$UID" != 0 ]; then
     FAKEROOT=fakeroot
     if [ "$NOEXECTMP" = y -o -z "$DOWNLOADONLY" ] \
             || ! hash "$FAKEROOT" 2>/dev/null; then
@@ -345,7 +352,7 @@ fi
 
 # Check if we're running from a tty, which does not interact well with X11
 if [ -z "$DOWNLOADONLY" ] && \
-        readlink -f "/proc/$$/fd/0" | grep -q '^/dev/tty'; then
+        readlink -f -- "/proc/$$/fd/0" | grep -q '^/dev/tty'; then
     echo \
 "WARNING: It is highly recommended that you run $APPLICATION from a crosh shell
 (Ctrl+Alt+T in Chromium OS), not from a VT. If you continue to run this from a
@@ -354,7 +361,7 @@ VT, you're gonna have a bad time. Press Ctrl-C at any point to abort." 1>&2
 fi
 
 # Set http_proxy if a proxy is specified.
-if [ ! "$PROXY" = 'unspecified' ]; then
+if [ "$PROXY" != 'unspecified' ]; then
     export http_proxy="$PROXY" https_proxy="$PROXY" ftp_proxy="$PROXY"
 fi
 
@@ -368,6 +375,15 @@ CHROOTS="$PREFIX/chroots"
 
 if [ -z "$RESTOREBIN" ]; then
     # Fix NAME if it was not specified.
+    # If updating and name/release weren't specified, check previous defaults
+    if [ -n "$UPDATE" -a -z "$NAME$RELEASE" ]; then
+        for rel in "$DEFAULTRELEASE" $PREVIOUS_DEFAULT_RELEASES; do
+            if [ -d "$CHROOTS/$rel" ]; then
+                DEFAULTRELEASE="$rel"
+                break
+            fi
+        done
+    fi
     CHROOT="$CHROOTS/${NAME:="${RELEASE:-"$DEFAULTRELEASE"}"}"
     CHROOTSRC="$CHROOT"
 fi
@@ -465,7 +481,7 @@ Valid chroots:
     # Sanity-check the release if we're updating
     if [ -n "$UPDATE" -a -n "$RELEASE" ] &&
             [ "`sh "$DISTRODIR/getrelease.sh" -r "$CHROOT"`" != "$RELEASE" ]; then
-        if [ ! "$UPDATE" = 2 ]; then
+        if [ "$UPDATE" != 2 ]; then
             error 1 \
 "Release doesn't match! Please correct the -r option, or specify a second -u to
 change the release, upgrading the chroot (dangerous)."
@@ -500,16 +516,35 @@ fi
 # Check if RELEASE is supported
 releaseline="`sed -n "s/^\($RELEASE[^a-z|]*\)\(|.*\)*$/\1/p" \
                                                          "$DISTRODIR/releases"`"
-if [ "${releaseline%"*"}" != "$releaseline" ]; then
-    echo "WARNING: $RELEASE is an unsupported release.
+if [ "${releaseline%"!"}" != "$releaseline" ]; then
+    echo_color tr "WARNING: $RELEASE has reached upstream end-of-life."
+
+    if [ -z "$UPDATE" ]; then
+        if [ -z "$MIRRORSET" ]; then
+            error 2 "\
+That means there will be no package updates available.
+You also have to specify a mirror to crouton (-m) for installation to proceed."
+        fi
+        echo "\
+You have specified a mirror, so installation will proceed anyway.
+You will almost certainly run into issues, but some features may still work.
+Press Ctrl-C to abort; installation will continue in 30 seconds." 1>&2
+    else
+        echo "\
+That means you may have issues updating now or in the future.
+You should upgrade your chroot to a supported version as soon as possible.
+Refer to https://goo.gl/Z5LGVD for upgrade instructions.
+Press Ctrl-C to abort; normal update will continue in 30 seconds." 1>&2
+    fi
+    sleep 30
+elif [ "${releaseline%"*"}" != "$releaseline" ]; then
+    echo_color r "WARNING: $RELEASE is an unsupported release." "
 You will likely run into issues, but things may work with some effort." 1>&2
 
     if [ -z "$UPDATE" ]; then
         echo "Press Ctrl-C to abort; installation will continue in 5 seconds." 1>&2
     else
-        echo "\
-If this is a surprise to you, $RELEASE has probably reached end of life.
-Refer to https://goo.gl/Z5LGVD for upgrade instructions." 1>&2
+        echo "Press Ctrl-C to abort; update will continue in 5 seconds." 1>&2
     fi
     sleep 5
 fi
@@ -541,22 +576,22 @@ elif [ -z "$DOWNLOADONLY" ] && \
     echo "$boot" | {
         read -r usb legacy signed
         suggest=''
-        if [ ! "$usb" = 0 ]; then
+        if [ "$usb" != 0 ]; then
             echo "WARNING: USB booting is enabled; consider disabling it." 1>&2
             suggest="$suggest dev_boot_usb=0"
         fi
-        if [ ! "$legacy" = 0 ]; then
+        if [ "$legacy" != 0 ]; then
             echo "WARNING: Legacy booting is enabled; consider disabling it." 1>&2
             suggest="$suggest dev_boot_legacy=0"
         fi
         if [ -n "$suggest" ]; then
-            if [ ! "$signed" = 1 ]; then
+            if [ "$signed" != 1 ]; then
                 echo "WARNING: Signed boot verification is disabled; consider enabling it." 1>&2
                 suggest="$suggest dev_boot_signed_only=1"
             fi
             echo "You can use the following command: sudo crossystem$suggest" 1>&2
             sleep 5
-        elif [ ! "$signed" = 1 ]; then
+        elif [ "$signed" != 1 ]; then
             # Only enable signed booting if the user hasn't enabled alternate
             # boot options, since those are opt-in.
             echo "WARNING: Signed boot verification is disabled; enabling it for security." 1>&2
@@ -625,16 +660,11 @@ deduptargets() {
             fi
             # Don't put duplicate entries in the targets list
             tlist=",$TARGETS,"
-            if [ ! "${tlist%",$TARGET,"*}" = "$tlist" ]; then
+            if [ "${tlist%",$TARGET,"*}" != "$tlist" ]; then
                 continue
             fi
             if [ ! -r "$TARGETSDIR/$TARGET" ]; then
                 echo "Previously installed target '$TARGET' no longer exists." 1>&2
-                continue
-            fi
-            # Don't add xephyr if system is using Freon
-            if [ "$TARGET" = "xephyr" -a -f /sbin/frecon ]; then
-                echo "Previously installed target '$TARGET' no longer valid with Freon - removing." 1>&2
                 continue
             fi
             # Add the target
@@ -736,4 +766,4 @@ if [ -f "$PREPARE" ]; then
     sh -e "$HOSTBINDIR/enter-chroot" -c "$CHROOTS" -n "$NAME" -xx
 fi
 
-echo "Done! You can enter the chroot by 'sudo enter-chroot'. Once inside use 'wayland' to start Weston compositor." 1>&2
+echo "Done! You can enter the chroot using enter-chroot." 1>&2
