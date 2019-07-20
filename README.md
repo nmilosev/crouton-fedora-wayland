@@ -8,6 +8,13 @@ than this version. This specific version ditches the old X server with Freon ide
 Wayland which is built-in in the latest versions of Chrome OS. It is much simpler
 and actually faster.
 
+Fedora 30 (July 2019) update
+=================================================
+
+This project is now in the hands of one awesome dude - @boydkelly who picked up where I left off.
+My chromebook is gone (I sure miss it) but you all are in good hands. :)
+
+
 Disclaimer
 =================================================
 
@@ -70,8 +77,7 @@ Installation
 ```
 
 cd /usr/local
-sudo curl -L -#  https://github.com/nmilosev/crouton-fedora-wayland/archive/master.tar.gz -o crouton-fedora-wayland.tar.gz
-sudo curl -L -#  https://github.com/boydkelly/crouton-fedora-wayland/archive/F30.tar.gz -o crouton-fedora-wayland.tar.gz
+sudo curl -L -# https://github.com/nmilosev/crouton-fedora-wayland/archive/master.tar.gz -o crouton-fedora-wayland.tar.gz
 sudo tar xvf crouton-fedora-wayland.tar.gz && rm crouton-fedora-wayland.tar.gz
 sudo sh ./crouton-fedora-wayland-master/installer/main.sh -r fedora -t fedora
 ```
