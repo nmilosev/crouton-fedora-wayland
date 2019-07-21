@@ -122,7 +122,7 @@ FAQ:
 
 Modify the ```defaults``` file in ```installer/fedora``` folder. You can find mirrors on the fedora mirror list site.
 
-**What works with F30 crouton-fedora-wayland?
+**What works with F30 crouton-fedora-wayland?**
 
 Most gnome/gtk-3 apps work out of the box.  Sometimes you may need to start with dbus-run-session for best results.  (ie nautilus)
 
@@ -138,7 +138,7 @@ Run Xwayland to support X11 apps.  If you want an X11 desktop such as i3 or *box
 
 Weston works fine on my hardware although it complains it wants egl.  If *I* install mesa-dri-drivers which provide this, then Weston becomes slow to the point of not being functional.  My workaround is to remove mesa-dri-drivers.  YMMV.
 
-**What notably doesn't work?  (yet....)
+**What notably doesn't work?  (yet....)**
 
 - Full Wayland gnome-shell desktop.  It should... but we're not there yet.
 
